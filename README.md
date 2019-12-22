@@ -1,5 +1,7 @@
-MIT License
+# achilles
+Egy nyílt-forráskódú szankciókezelő rendszer
 
+## Licensz
 Copyright (c) 2019 marvintheskid (Kovács Márton)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
