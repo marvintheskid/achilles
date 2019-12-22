@@ -44,7 +44,7 @@ public class Achilles extends JavaPlugin {
                 return super.put(key, value);
             }
         };
-        handlers.put(Ban.class, () -> Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + Variables.Database.BAN_TABLE_NAME + "` ("
+        handlers.put(Ban.class, () -> Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + BAN_TABLE_NAME + "` ("
              + "`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,"
              + "`server` varchar(200) NOT NULL,"
              + "`issuer` varchar(36) NOT NULL,"
@@ -94,11 +94,16 @@ public class Achilles extends JavaPlugin {
                 + "`active` tinyint(1) NOT NULL) DEFAULT CHARSET=utf8;",
             (result) -> {})
         );
-        Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + Variables.Database.ALTS_TABLE_NAME + "` ("
+        Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + ALTS_TABLE_NAME + "` ("
             + "`uuid` varchar(36) UNIQUE KEY NOT NULL,"
             + "`username` varchar(16) NOT NULL,"
             + "`ip` varchar(15) NOT NULL,"
             + "`lastLogin` bigint NOT NULL) DEFAULT CHARSET=utf8;",
             (result) -> {});
+    }
+
+    @Override
+    public void onDisable() {
+        connection.disconnect();
     }
 }
