@@ -13,6 +13,14 @@ database:
     blacklist: "achilles_blacklists"
   # Lásd: https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
   pool-size: 2
+# Redis messenger
+messenger:
+  host: 127.0.0.1
+    port: 6379
+    user: root
+    auth:
+      authenticate: false
+      password: password
 server-name: "Test"
 save-alts: false
 language:
