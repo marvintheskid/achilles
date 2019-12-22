@@ -5,14 +5,16 @@ database:
   password: password
   database: database
   tables:
-    ban: "achilles_bans"
-    mute: "achilles_mutes"
-    kick: "achilles_kicks"
-    warn: "achilles_warns"
+    bans: "achilles_bans"
+    mutes: "achilles_mutes"
+    kicks: "achilles_kicks"
+    warns: "achilles_warns"
+    alts: "achilles_alts"
     blacklist: "achilles_blacklists"
   # Lásd: https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
   pool-size: 2
 server-name: "Test"
+save-alts: false
 language:
   #Placeholderek:
   # {executor}
@@ -87,7 +89,7 @@ unblacklist:
   silent: "&7&o[Silent]&r "
   default-reason: "Not defined. -s"
 
-# Other
+# Egyéb
 already-punished: "&cThis player is already punished."
 override-reason: "Overrided by {sender}"
 failed-to-load-player-profile: "&cSomething went wrong while tried to load target's profile."

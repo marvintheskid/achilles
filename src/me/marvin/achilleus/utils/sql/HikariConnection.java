@@ -3,28 +3,76 @@ package me.marvin.achilleus.utils.sql;
 import com.google.common.base.Preconditions;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.pool.HikariProxyPreparedStatement;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
+@Getter
+@NoArgsConstructor
 public class HikariConnection {
     private String host, user, db, pw;
     private int port, poolSize;
     private HikariDataSource connection;
+    private ExecutorService service;
 
-    public HikariConnection(String host, int port, int poolSize, String user, String pw, String db) {
+    public HikariConnection(String host, int port, String user, String pw, String db, boolean async, int poolSize) {
         this.poolSize = poolSize;
         this.host = host;
         this.user = user;
         this.port = port;
         this.db = db;
         this.pw = pw;
+        if (async) {
+            this.service = Executors.newCachedThreadPool();
+        }
     }
 
     public void query(String query, Consumer<ResultSet> result, Object... params) {
+        this.query(true, query, result, params);
+    }
+
+    public void update(String query, Consumer<Integer> result, Object... params) {
+        this.update(true, query, result, params);
+    }
+
+    public void batchUpdate(String query, Consumer<Integer[]> result, BatchContainer... params) {
+        this.batchUpdate(true, query, result, params);
+    }
+
+    public void query(boolean async, String query, Consumer<ResultSet> result, Object... params) {
+        if (service != null && async) {
+            service.execute(() -> queryInternal(query, result, params));
+        } else {
+            queryInternal(query, result, params);
+        }
+    }
+
+    public void update(boolean async, String query, Consumer<Integer> result, Object... params) {
+        if (service != null && async) {
+            service.execute(() -> updateInternal(query, result, params));
+        } else {
+            updateInternal(query, result, params);
+        }
+    }
+
+    public void batchUpdate(boolean async, String query, Consumer<Integer[]> result, BatchContainer... params) {
+        if (service != null && async) {
+            service.execute(() -> batchUpdate(query, result, params));
+        } else {
+            batchUpdate(query, result, params);
+        }
+    }
+
+    private void queryInternal(String query, Consumer<ResultSet> result, Object... params) {
         Preconditions.checkNotNull(connection, "connection is null");
         try (Connection conn = connection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             int index = 1;
@@ -32,13 +80,15 @@ public class HikariConnection {
                 stmt.setObject(index, param);
                 index++;
             }
-            result.accept(stmt.executeQuery());
+            try (ResultSet rs = stmt.executeQuery()) {
+                result.accept(rs);
+            }
         } catch (Exception ex) {
             result.accept(null);
         }
     }
 
-    public void update(String query, Consumer<Integer> result, Object... params) {
+    private void updateInternal(String query, Consumer<Integer> result, Object... params) {
         Preconditions.checkNotNull(connection, "connection is null");
         try (Connection conn = connection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             int index = 1;
@@ -52,7 +102,7 @@ public class HikariConnection {
         }
     }
 
-    public void batchUpdate(String query, Consumer<Integer[]> result, BatchContainer... params) {
+    private void updateBatchInternal(String query, Consumer<Integer[]> result, BatchContainer... params) {
         Preconditions.checkNotNull(connection, "connection is null");
         try (Connection conn = connection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             for (BatchContainer container : params) {

@@ -1,9 +1,11 @@
 package me.marvin.achilleus.punishment;
 
 import com.google.common.base.Preconditions;
+import lombok.Getter;
 
 import java.util.UUID;
 
+@Getter
 public abstract class LiftablePunishment extends Punishment {
     protected UUID liftedBy;
     protected String liftReason;
@@ -21,5 +23,6 @@ public abstract class LiftablePunishment extends Punishment {
         Preconditions.checkNotNull(liftReason, "liftreason was null");
         liftedOn = System.currentTimeMillis();
         active = false;
+        liftPunishment();
     }
 }

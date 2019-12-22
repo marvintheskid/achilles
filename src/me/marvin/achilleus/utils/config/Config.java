@@ -2,6 +2,7 @@ package me.marvin.achilleus.utils.config;
 
 import lombok.Getter;
 import me.marvin.achilleus.utils.config.resolver.ConfigResolver;
+import me.marvin.achilleus.utils.config.resolver.impl.BooleanResolver;
 import me.marvin.achilleus.utils.config.resolver.impl.IntegerResolver;
 import me.marvin.achilleus.utils.config.resolver.impl.StringResolver;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -35,6 +36,8 @@ public class Config {
         this.resolverMap.put(int.class, new IntegerResolver());
         this.resolverMap.put(Long.class, new IntegerResolver());
         this.resolverMap.put(long.class, new IntegerResolver());
+        this.resolverMap.put(Boolean.class, new BooleanResolver());
+        this.resolverMap.put(boolean.class, new BooleanResolver());
     }
 
     public void saveDefaultConfig() {

@@ -8,14 +8,33 @@ import java.util.Locale;
 
 public class Variables {
     public static class Database {
-        @ConfigPath(path = "database.tables.bans-name", config = "settings")
+        public static class Credentials {
+            @ConfigPath(path = "database.host", config = "settings")
+            public static String HOST = "";
+            @ConfigPath(path = "database.user", config = "settings")
+            public static String USER = "";
+            @ConfigPath(path = "database.password", config = "settings")
+            public static String PASSWORD = "";
+            @ConfigPath(path = "database.port", config = "settings")
+            public static int PORT = 3306;
+        }
+
+        @ConfigPath(path = "database.async", config = "settings")
+        public static boolean ASYNC = false;
+        @ConfigPath(path = "database.pool-size", config = "settings")
+        public static int POOL_SIZE = 1;
+        @ConfigPath(path = "database.database", config = "settings")
+        public static String DATABASE_NAME = "";
+        @ConfigPath(path = "database.tables.bans", config = "settings")
         public static String BAN_TABLE_NAME = "";
-        @ConfigPath(path = "database.tables.kicks-name", config = "settings")
+        @ConfigPath(path = "database.tables.kicks", config = "settings")
         public static String KICK_TABLE_NAME = "";
-        @ConfigPath(path = "database.tables.mutes-name", config = "settings")
+        @ConfigPath(path = "database.tables.mutes", config = "settings")
         public static String MUTE_TABLE_NAME = "";
-        @ConfigPath(path = "database.tables.blacklists-name", config = "settings")
+        @ConfigPath(path = "database.tables.blacklists", config = "settings")
         public static String BLACKLIST_TABLE_NAME = "";
+        @ConfigPath(path = "database.tables.alts", config = "settings")
+        public static String ALTS_TABLE_NAME = "";
         @ConfigPath(path = "server-name", config = "settings")
         public static String SERVER_NAME = "";
     }

@@ -4,6 +4,8 @@ import me.marvin.achilleus.Achilles;
 import me.marvin.achilleus.Variables;
 import me.marvin.achilleus.punishment.LiftablePunishment;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class Ban extends LiftablePunishment {
@@ -15,7 +17,6 @@ public class Ban extends LiftablePunishment {
         this.until = until;
         this.issueReason = reason;
         this.active = true;
-
         this.server = Variables.Database.SERVER_NAME;
         this.issuedOn = System.currentTimeMillis();
     }
@@ -30,7 +31,7 @@ public class Ban extends LiftablePunishment {
                 "`until`," +
                 "`issuedOn`, " +
                 "`active`) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (result) -> {}, server, issuer.toString(), target.toString(), issueReason, until, issuedOn, active);
+                (result) -> {}, server, issuer.toString(), target.toString(), issueReason, until, issuedOn, active);
     }
 
     @Override
@@ -41,6 +42,23 @@ public class Ban extends LiftablePunishment {
             "liftReason = ?," +
             "liftedBy = ?" +
             "WHERE target = ?" +
-            "AND id = ?", (result) -> {}, active, liftedOn, liftReason, liftedBy.toString(), target.toString(), id);
+            "AND id = ?",
+            (result) -> {}, active, liftedOn, liftReason, liftedBy.toString(), target.toString(), id);
+    }
+
+    @Override
+    public void fromResultSet(ResultSet rs) throws SQLException {
+        this.server = rs.getString("server");
+        this.issuer = UUID.fromString(rs.getString("issuer"));
+        this.target = UUID.fromString(rs.getString("target"));
+        this.issueReason = rs.getString("issueReason");
+        this.until = rs.getLong("until");
+        this.issuedOn = rs.getLong("issuedOn");
+        this.active = rs.getBoolean("active");
+        if (!this.active) {
+            this.liftedBy = UUID.fromString(rs.getString("liftedBy"));
+            this.liftReason = rs.getString("liftReason");
+            this.liftedOn = rs.getLong("liftedOn");
+        }
     }
 }
