@@ -20,6 +20,8 @@ public class Language {
         public static String ALREADY_PUNISHED = "";
         @ConfigPath(path = "plugin-start-kick-message", config = "language")
         public static String PLUGIN_START_KICK_MESSAGE = "";
+        @ConfigPath(path = "console-name", config = "language")
+        public static String CONSOLE_NAME = "";
     }
 
     public static class Kick {

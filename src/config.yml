@@ -105,3 +105,4 @@ target-is-offline: '&cTarget is offline!'
 no-permission: "&cYou don't have enough permission!"
 no-permission-to-override: "&cYou don't have enough permissions to override an existing punishment."
 not-punished: "&cThis player is not punished."
+console-name: "~CONSOLE"

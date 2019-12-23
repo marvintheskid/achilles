@@ -21,10 +21,12 @@ public class Achilles extends JavaPlugin {
     @Getter private static Map<Class<? extends Punishment>, PunishmentHandler> handlers;
     @Getter private static ProfileHandler profileHandler;
     @Getter private static HikariConnection connection;
+    @Getter private static Achilles instance;
     @Getter private static Config config;
 
     @Override
     public void onEnable() {
+        instance = this;
         config = new Config("config", this);
         config.saveDefaultConfig();
         profileHandler = new ProfileHandler();
@@ -105,5 +107,10 @@ public class Achilles extends JavaPlugin {
     @Override
     public void onDisable() {
         connection.disconnect();
+        connection = null;
+        instance = null;
+        profileHandler = null;
+        config = null;
+        handlers = null;
     }
 }
