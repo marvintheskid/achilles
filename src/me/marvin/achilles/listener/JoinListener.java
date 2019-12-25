@@ -15,6 +15,7 @@ public class JoinListener implements Listener {
         Profile prof = Achilles.getProfileHandler().getProfile(p.getUniqueId());
         if (prof != null) {
             prof.updateIp();
+            prof.scanAlts();
         }
         Bukkit.getOnlinePlayers().stream()
             .filter(other -> other.hasPermission("achilles.*") || other.hasPermission("achilles.checkAlts"))

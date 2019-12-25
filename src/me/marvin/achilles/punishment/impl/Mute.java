@@ -47,6 +47,16 @@ public class Mute extends ExpirablePunishment {
     }
 
     @Override
+    public void expirePunishment() {
+        if (!active || !isExpired()) return;
+        Achilles.getConnection().update("UPDATE `" + Variables.Database.MUTE_TABLE_NAME + "` SET " +
+            "active = ?, " +
+            "WHERE target = ? " +
+            "AND id = ?;",
+            (result) -> {}, active, target.toString(), id);
+    }
+
+    @Override
     public void fromResultSet(ResultSet rs) throws SQLException {
         this.server = rs.getString("server");
         this.issuer = UUID.fromString(rs.getString("issuer"));

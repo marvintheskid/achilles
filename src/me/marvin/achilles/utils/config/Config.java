@@ -13,8 +13,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 
 @Getter
 public class Config {
@@ -64,7 +64,7 @@ public class Config {
     }
 
     public void loadAnnotatedValues(Class<?> clazz) {
-        for (Field field : clazz.getDeclaredFields()) {
+        for (Field field : getInheritedPrivateFields(clazz)) {
             if (field.isAnnotationPresent(ConfigPath.class)) {
                 String config = field.getAnnotation(ConfigPath.class).config();
                 String path = field.getAnnotation(ConfigPath.class).path();
@@ -86,7 +86,7 @@ public class Config {
             }
         }
 
-        for (Method method : clazz.getDeclaredMethods()) {
+        for (Method method : getInheritedPrivateMethods(clazz)) {
             if (method.isAnnotationPresent(InitializeAfterConfig.class)) {
                 if (!method.getAnnotation(InitializeAfterConfig.class).config().equalsIgnoreCase(name)) continue;
                 if (!method.isAccessible()) method.setAccessible(true);
@@ -97,5 +97,25 @@ public class Config {
                 }
             }
         }
+    }
+
+    private List<Field> getInheritedPrivateFields(Class<?> clazz) {
+        List<Field> result = new ArrayList<>();
+        Class<?> i = clazz;
+        while (i != null && i != Object.class) {
+            result.addAll(Arrays.asList(i.getDeclaredFields()));
+            i = i.getSuperclass();
+        }
+        return result;
+    }
+
+    private List<Method> getInheritedPrivateMethods(Class<?> clazz) {
+        List<Method> result = new ArrayList<>();
+        Class<?> i = clazz;
+        while (i != null && i != Object.class) {
+            result.addAll(Arrays.asList(i.getDeclaredMethods()));
+            i = i.getSuperclass();
+        }
+        return result;
     }
 }

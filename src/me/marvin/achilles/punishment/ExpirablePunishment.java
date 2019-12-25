@@ -8,13 +8,24 @@ public abstract class ExpirablePunishment extends LiftablePunishment {
 
     protected long until;
 
+    protected abstract void expirePunishment();
+
+    public final void expire() {
+        active = false;
+        expirePunishment();
+    }
+
     public final boolean isPermanent() {
-        return until == PERMANENT_PUNISHMENT && active;
+        return until == PERMANENT_PUNISHMENT;
+    }
+
+    public final boolean isExpired() {
+        return !isPermanent() && getRemaining() == 0;
     }
 
     public final long getRemaining() {
-        if (until == -1) {
-            return until;
+        if (isPermanent()) {
+            return PERMANENT_PUNISHMENT;
         } else {
             if (until <= System.currentTimeMillis()) {
                 return 0;

@@ -12,7 +12,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import static me.marvin.achilles.utils.etc.StringUtils.colorize;
 
-//TODO: Listener
 public class ChatListener implements Listener {
     @EventHandler
     void onChat(AsyncPlayerChatEvent e) {
@@ -26,9 +25,9 @@ public class ChatListener implements Listener {
             e.setCancelled(true);
             String username = mute.getIssuer() == Punishment.CONSOLE_UUID ? Language.Other.CONSOLE_NAME : Achilles.getProfileHandler().getProfile(mute.getIssuer()).getUsername();
             p.sendMessage(colorize(mute.isPermanent() ? Language.Mute.PUNISHMENT_MESSAGE : Language.Tempmute.PUNISHMENT_MESSAGE
-                .replace("{issuer}", "sdaf")
-                .replace("{target}", "asd")
-                .replace("{remaining}", "asd")
+                .replace("{issuer}", "")
+                .replace("{target}", "")
+                .replace("{remaining}", "")
             ));
         });
     }
