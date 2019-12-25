@@ -4,152 +4,157 @@ import me.marvin.achilles.utils.config.ConfigPath;
 
 public class Language {
     public static class Other {
-        @ConfigPath(path = "failed-to-load-player-profile", config = "language")
+        @ConfigPath(path = "failed-to-load-player-profile", config = "config")
         public static String FAILED_TO_LOAD = "";
-        @ConfigPath(path = "target-is-offline", config = "language")
+        @ConfigPath(path = "target-is-offline", config = "config")
         public static String TARGET_IS_OFFLINE = "";
-        @ConfigPath(path = "no-permission", config = "language")
+        @ConfigPath(path = "no-permission", config = "config")
         public static String NO_PERMISSION = "";
-        @ConfigPath(path = "no-permission-to-override", config = "language")
+        @ConfigPath(path = "no-permission-to-override", config = "config")
         public static String NO_PERMISSION_TO_OVERRIDE = "";
-        @ConfigPath(path = "not-punished", config = "language")
+        @ConfigPath(path = "not-punished", config = "config")
         public static String NOT_PUNISHED = "";
-        @ConfigPath(path = "override-reason", config = "language")
+        @ConfigPath(path = "override-reason", config = "config")
         public static String OVERRIDE_REASON = "";
-        @ConfigPath(path = "already-punished", config = "language")
+        @ConfigPath(path = "already-punished", config = "config")
         public static String ALREADY_PUNISHED = "";
-        @ConfigPath(path = "plugin-start-kick-message", config = "language")
+        @ConfigPath(path = "plugin-start-kick-message", config = "config")
         public static String PLUGIN_START_KICK_MESSAGE = "";
-        @ConfigPath(path = "console-name", config = "language")
+        @ConfigPath(path = "console-name", config = "config")
+        public static String CONSOLE_NAME = "";
+    }
+
+    public static class Alts {
+        @ConfigPath(path = "alts.check-message", config = "config")
         public static String CONSOLE_NAME = "";
     }
 
     public static class Kick {
-        @ConfigPath(path = "kick.usage", config = "language")
+        @ConfigPath(path = "punishments.kick.usage", config = "config")
         public static String USAGE = "";
-        @ConfigPath(path = "kick.message", config = "language")
+        @ConfigPath(path = "punishments.kick.message", config = "config")
         public static String MESSAGE = "";
-        @ConfigPath(path = "kick.alert-message", config = "language")
+        @ConfigPath(path = "punishments.kick.alert-message", config = "config")
         public static String ALERT_MESSAGE = "";
-        @ConfigPath(path = "kick.silent", config = "language")
+        @ConfigPath(path = "punishments.kick.silent", config = "config")
         public static String SILENT = "";
-        @ConfigPath(path = "kick.default-reason", config = "language")
+        @ConfigPath(path = "punishments.kick.default-reason", config = "config")
         public static String DEFAULT_REASON = "";
-        @ConfigPath(path = "kick.punishment-message", config = "language")
+        @ConfigPath(path = "punishments.kick.punishment-message", config = "config")
         public static String PUNISHMENT_MESSAGE = "";
     }
 
     public static class Ban {
-        @ConfigPath(path = "ban.usage", config = "language")
+        @ConfigPath(path = "punishments.ban.usage", config = "config")
         public static String USAGE = "";
-        @ConfigPath(path = "ban.message", config = "language")
+        @ConfigPath(path = "punishments.ban.message", config = "config")
         public static String MESSAGE = "";
-        @ConfigPath(path = "ban.alert-message", config = "language")
+        @ConfigPath(path = "punishments.ban.alert-message", config = "config")
         public static String ALERT_MESSAGE = "";
-        @ConfigPath(path = "ban.silent", config = "language")
+        @ConfigPath(path = "punishments.ban.silent", config = "config")
         public static String SILENT = "";
-        @ConfigPath(path = "ban.default-reason", config = "language")
+        @ConfigPath(path = "punishments.ban.default-reason", config = "config")
         public static String DEFAULT_REASON = "";
-        @ConfigPath(path = "ban.punishment-message", config = "language")
+        @ConfigPath(path = "punishments.ban.punishment-message", config = "config")
         public static String PUNISHMENT_MESSAGE = "";
     }
 
     public static class Mute {
-        @ConfigPath(path = "mute.usage", config = "language")
+        @ConfigPath(path = "punishments.mute.usage", config = "config")
         public static String USAGE = "";
-        @ConfigPath(path = "mute.message", config = "language")
+        @ConfigPath(path = "punishments.mute.message", config = "config")
         public static String MESSAGE = "";
-        @ConfigPath(path = "mute.alert-message", config = "language")
+        @ConfigPath(path = "punishments.mute.alert-message", config = "config")
         public static String ALERT_MESSAGE = "";
-        @ConfigPath(path = "mute.silent", config = "language")
+        @ConfigPath(path = "punishments.mute.silent", config = "config")
         public static String SILENT = "";
-        @ConfigPath(path = "mute.default-reason", config = "language")
+        @ConfigPath(path = "punishments.mute.default-reason", config = "config")
         public static String DEFAULT_REASON = "";
-        @ConfigPath(path = "mute.punishment-message", config = "language")
+        @ConfigPath(path = "punishments.mute.punishment-message", config = "config")
         public static String PUNISHMENT_MESSAGE = "";
     }
 
     public static class Blacklist {
-        @ConfigPath(path = "blacklist.usage", config = "language")
+        @ConfigPath(path = "punishments.blacklist.usage", config = "config")
         public static String USAGE = "";
-        @ConfigPath(path = "blacklist.message", config = "language")
+        @ConfigPath(path = "punishments.blacklist.message", config = "config")
         public static String MESSAGE = "";
-        @ConfigPath(path = "blacklist.alert-message", config = "language")
+        @ConfigPath(path = "punishments.blacklist.alert-message", config = "config")
         public static String ALERT_MESSAGE = "";
-        @ConfigPath(path = "blacklist.silent", config = "language")
+        @ConfigPath(path = "punishments.blacklist.silent", config = "config")
         public static String SILENT = "";
-        @ConfigPath(path = "blacklist.default-reason", config = "language")
+        @ConfigPath(path = "punishments.blacklist.default-reason", config = "config")
         public static String DEFAULT_REASON = "";
-        @ConfigPath(path = "blacklist.punishment-message", config = "language")
+        @ConfigPath(path = "punishments.blacklist.punishment-message", config = "config")
         public static String PUNISHMENT_MESSAGE = "";
     }
 
     public static class Tempban {
-        @ConfigPath(path = "tempban.usage", config = "language")
+        @ConfigPath(path = "punishments.tempban.usage", config = "config")
         public static String USAGE = "";
-        @ConfigPath(path = "tempban.message", config = "language")
+        @ConfigPath(path = "punishments.tempban.message", config = "config")
         public static String MESSAGE = "";
-        @ConfigPath(path = "tempban.alert-message", config = "language")
+        @ConfigPath(path = "punishments.tempban.alert-message", config = "config")
         public static String ALERT_MESSAGE = "";
-        @ConfigPath(path = "tempban.silent", config = "language")
+        @ConfigPath(path = "punishments.tempban.silent", config = "config")
         public static String SILENT = "";
-        @ConfigPath(path = "tempban.default-reason", config = "language")
+        @ConfigPath(path = "punishments.tempban.default-reason", config = "config")
         public static String DEFAULT_REASON = "";
-        @ConfigPath(path = "tempban.punishment-message", config = "language")
+        @ConfigPath(path = "punishments.tempban.punishment-message", config = "config")
         public static String PUNISHMENT_MESSAGE = "";
     }
 
     public static class Tempmute {
-        @ConfigPath(path = "tempmute.usage", config = "language")
+        @ConfigPath(path = "punishments.tempmute.usage", config = "config")
         public static String USAGE = "";
-        @ConfigPath(path = "tempmute.message", config = "language")
+        @ConfigPath(path = "punishments.tempmute.message", config = "config")
         public static String MESSAGE = "";
-        @ConfigPath(path = "tempmute.alert-message", config = "language")
+        @ConfigPath(path = "punishments.tempmute.alert-message", config = "config")
         public static String ALERT_MESSAGE = "";
-        @ConfigPath(path = "tempmute.silent", config = "language")
+        @ConfigPath(path = "punishments.tempmute.silent", config = "config")
         public static String SILENT = "";
-        @ConfigPath(path = "tempmute.default-reason", config = "language")
+        @ConfigPath(path = "punishments.tempmute.default-reason", config = "config")
         public static String DEFAULT_REASON = "";
-        @ConfigPath(path = "tempmute.punishment-message", config = "language")
+        @ConfigPath(path = "punishments.tempmute.punishment-message", config = "config")
         public static String PUNISHMENT_MESSAGE = "";
     }
 
     public static class Unban {
-        @ConfigPath(path = "unban.usage", config = "language")
+        @ConfigPath(path = "punishments.unban.usage", config = "config")
         public static String USAGE = "";
-        @ConfigPath(path = "unban.message", config = "language")
+        @ConfigPath(path = "punishments.unban.message", config = "config")
         public static String MESSAGE = "";
-        @ConfigPath(path = "unban.alert-message", config = "language")
+        @ConfigPath(path = "punishments.unban.alert-message", config = "config")
         public static String ALERT_MESSAGE = "";
-        @ConfigPath(path = "unban.silent", config = "language")
+        @ConfigPath(path = "punishments.unban.silent", config = "config")
         public static String SILENT = "";
-        @ConfigPath(path = "unban.default-reason", config = "language")
+        @ConfigPath(path = "punishments.unban.default-reason", config = "config")
         public static String DEFAULT_REASON = "";
     }
 
     public static class Unmute {
-        @ConfigPath(path = "unmute.usage", config = "language")
+        @ConfigPath(path = "punishments.unmute.usage", config = "config")
         public static String USAGE = "";
-        @ConfigPath(path = "unmute.message", config = "language")
+        @ConfigPath(path = "punishments.unmute.message", config = "config")
         public static String MESSAGE = "";
-        @ConfigPath(path = "unmute.alert-message", config = "language")
+        @ConfigPath(path = "punishments.unmute.alert-message", config = "config")
         public static String ALERT_MESSAGE = "";
-        @ConfigPath(path = "unmute.silent", config = "language")
+        @ConfigPath(path = "punishments.unmute.silent", config = "config")
         public static String SILENT = "";
-        @ConfigPath(path = "unmute.default-reason", config = "language")
+        @ConfigPath(path = "punishments.unmute.default-reason", config = "config")
         public static String DEFAULT_REASON = "";
     }
 
     public static class Unblacklist {
-        @ConfigPath(path = "unblacklist.usage", config = "language")
+        @ConfigPath(path = "punishments.unblacklist.usage", config = "config")
         public static String USAGE = "";
-        @ConfigPath(path = "unblacklist.message", config = "language")
+        @ConfigPath(path = "punishments.unblacklist.message", config = "config")
         public static String MESSAGE = "";
-        @ConfigPath(path = "unblacklist.alert-message", config = "language")
+        @ConfigPath(path = "punishments.unblacklist.alert-message", config = "config")
         public static String ALERT_MESSAGE = "";
-        @ConfigPath(path = "unblacklist.silent", config = "language")
+        @ConfigPath(path = "punishments.unblacklist.silent", config = "config")
         public static String SILENT = "";
-        @ConfigPath(path = "unblacklist.default-reason", config = "language")
+        @ConfigPath(path = "punishments.unblacklist.default-reason", config = "config")
         public static String DEFAULT_REASON = "";
     }
 }

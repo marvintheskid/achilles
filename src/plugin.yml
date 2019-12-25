@@ -1,0 +1,21 @@
+main: me.marvin.achilles.Achilles
+name: achilles
+version: 0.1-alpha
+author: marvin
+website: https://github.com/marvintheskid/achilles
+
+commands:
+  pseudocommand:
+    description: pseudodescription
+    permission: pseudopermission
+    aliases:
+      - pseudoalias
+permissions:
+  achilles.*:
+    children:
+      - achilles.checkalts
+    description: Master permission.
+    default: false
+  achilles.checkalts:
+    description: Permission for checking alts.
+    default: false

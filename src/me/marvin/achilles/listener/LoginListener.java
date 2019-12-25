@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import static me.marvin.achilles.utils.etc.StringUtils.colorize;
 
+//TODO Punishmentek checkelése
 public class LoginListener implements Listener {
     @EventHandler
     void onLogin(AsyncPlayerPreLoginEvent e) {

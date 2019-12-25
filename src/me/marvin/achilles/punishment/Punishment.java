@@ -18,11 +18,11 @@ public abstract class Punishment {
     public abstract void fromResultSet(ResultSet rs) throws SQLException;
     protected abstract void issuePunishment();
 
-    public void issue() {
+    public final void issue() {
         Preconditions.checkNotNull(issuer, "issuer was null");
         Preconditions.checkNotNull(target, "target was null");
         Preconditions.checkNotNull(issueReason, "issuereason was null");
         issuedOn = System.currentTimeMillis();
-        issuePunishment();
+        this.issuePunishment();
     }
 }

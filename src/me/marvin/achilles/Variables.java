@@ -4,87 +4,99 @@ import me.marvin.achilles.utils.config.ConfigPath;
 import me.marvin.achilles.utils.config.InitializeAfterConfig;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Locale;
 
 public class Variables {
     public static class Database {
         public static class Credentials {
-            @ConfigPath(path = "database.host", config = "settings")
+            @ConfigPath(path = "database.host", config = "config")
             public static String HOST = "";
-            @ConfigPath(path = "database.user", config = "settings")
-            public static String USER = "";
-            @ConfigPath(path = "database.password", config = "settings")
-            public static String PASSWORD = "";
-            @ConfigPath(path = "database.port", config = "settings")
+            @ConfigPath(path = "database.port", config = "config")
             public static int PORT = 3306;
+            @ConfigPath(path = "database.user", config = "config")
+            public static String USER = "";
+            @ConfigPath(path = "database.password", config = "config")
+            public static String PASSWORD = "";
         }
 
-        @ConfigPath(path = "database.async", config = "settings")
+        @ConfigPath(path = "database.async", config = "config")
         public static boolean ASYNC = false;
-        @ConfigPath(path = "database.pool-size", config = "settings")
+        @ConfigPath(path = "database.pool-size", config = "config")
         public static int POOL_SIZE = 1;
-        @ConfigPath(path = "database.database", config = "settings")
+        @ConfigPath(path = "database.database", config = "config")
         public static String DATABASE_NAME = "";
-        @ConfigPath(path = "database.tables.bans", config = "settings")
+        @ConfigPath(path = "database.tables.bans", config = "config")
         public static String BAN_TABLE_NAME = "";
-        @ConfigPath(path = "database.tables.kicks", config = "settings")
+        @ConfigPath(path = "database.tables.kicks", config = "config")
         public static String KICK_TABLE_NAME = "";
-        @ConfigPath(path = "database.tables.mutes", config = "settings")
+        @ConfigPath(path = "database.tables.mutes", config = "config")
         public static String MUTE_TABLE_NAME = "";
-        @ConfigPath(path = "database.tables.blacklists", config = "settings")
+        @ConfigPath(path = "database.tables.blacklists", config = "config")
         public static String BLACKLIST_TABLE_NAME = "";
-        @ConfigPath(path = "database.tables.alts", config = "settings")
+        @ConfigPath(path = "database.tables.alts", config = "config")
         public static String ALTS_TABLE_NAME = "";
-        @ConfigPath(path = "server-name", config = "settings")
+        @ConfigPath(path = "server-name", config = "config")
         public static String SERVER_NAME = "";
     }
 
-    public static class Other {
-        @ConfigPath(path = "punishment.active.true", config = "settings")
+    public static class Punishment {
+        @ConfigPath(path = "punishment.active.true", config = "config")
         public static String PUNISHMENT_ACTIVE_TRUE = "";
-        @ConfigPath(path = "punishment.active.false", config = "settings")
+        @ConfigPath(path = "punishment.active.false", config = "config")
         public static String PUNISHMENT_ACTIVE_FALSE = "";
     }
 
+    public static class Alts {
+        @ConfigPath(path = "alts.separator", config = "config")
+        public static String SEPARATOR = "";
+        @ConfigPath(path = "alts.online", config = "config")
+        public static String ONLINE_ALT = "";
+        @ConfigPath(path = "alts.banned", config = "config")
+        public static String BANNED_ALT = "";
+        @ConfigPath(path = "alts.offline", config = "config")
+        public static String OFFLINE_ALT = "";
+    }
+
     public static class Date {
-        @ConfigPath(path = "date-formatting.pattern-settings.locale", config = "settings")
+        @ConfigPath(path = "date-formatting.pattern-settings.locale", config = "config")
         private static String LOCALE_STRING = "";
-        @ConfigPath(path = "date-formatting.pattern-settings.pattern", config = "settings")
+        @ConfigPath(path = "date-formatting.pattern-settings.pattern", config = "config")
         private static String DATE_STRING = "";
 
-        @ConfigPath(path = "date-formatting.year", config = "settings")
+        @ConfigPath(path = "date-formatting.year", config = "config")
         public static String YEAR = "";
-        @ConfigPath(path = "date-formatting.years", config = "settings")
+        @ConfigPath(path = "date-formatting.years", config = "config")
         public static String YEARS = "";
-        @ConfigPath(path = "date-formatting.month", config = "settings")
+        @ConfigPath(path = "date-formatting.month", config = "config")
         public static String MONTH = "";
-        @ConfigPath(path = "date-formatting.months", config = "settings")
+        @ConfigPath(path = "date-formatting.months", config = "config")
         public static String MONTHS = "";
-        @ConfigPath(path = "date-formatting.week", config = "settings")
+        @ConfigPath(path = "date-formatting.week", config = "config")
         public static String WEEK = "";
-        @ConfigPath(path = "date-formatting.weeks", config = "settings")
+        @ConfigPath(path = "date-formatting.weeks", config = "config")
         public static String WEEKS = "";
-        @ConfigPath(path = "date-formatting.day", config = "settings")
+        @ConfigPath(path = "date-formatting.day", config = "config")
         public static String DAY = "";
-        @ConfigPath(path = "date-formatting.days", config = "settings")
+        @ConfigPath(path = "date-formatting.days", config = "config")
         public static String DAYS = "";
-        @ConfigPath(path = "date-formatting.hour", config = "settings")
+        @ConfigPath(path = "date-formatting.hour", config = "config")
         public static String HOUR = "";
-        @ConfigPath(path = "date-formatting.hours", config = "settings")
+        @ConfigPath(path = "date-formatting.hours", config = "config")
         public static String HOURS = "";
-        @ConfigPath(path = "date-formatting.minute", config = "settings")
+        @ConfigPath(path = "date-formatting.minute", config = "config")
         public static String MINUTE = "";
-        @ConfigPath(path = "date-formatting.minutes", config = "settings")
+        @ConfigPath(path = "date-formatting.minutes", config = "config")
         public static String MINUTES = "";
-        @ConfigPath(path = "date-formatting.second", config = "settings")
+        @ConfigPath(path = "date-formatting.second", config = "config")
         public static String SECOND = "";
-        @ConfigPath(path = "date-formatting.seconds", config = "settings")
+        @ConfigPath(path = "date-formatting.seconds", config = "config")
         public static String SECONDS = "";
 
         public static Locale LOCALE;
         public static SimpleDateFormat DATE_FORMAT;
 
-        @InitializeAfterConfig(config = "settings")
+        @InitializeAfterConfig(config = "config")
         private static void loadLocale() {
             LOCALE = new Locale.Builder().setLanguageTag(LOCALE_STRING).build();
             DATE_FORMAT = new SimpleDateFormat(DATE_STRING, LOCALE);

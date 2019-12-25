@@ -61,39 +61,39 @@ public class Achilles extends JavaPlugin {
             (result) -> {})
         );
         handlers.put(Kick.class, () -> Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + KICK_TABLE_NAME + "` ("
-                + "`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-                + "`server` varchar(200) NOT NULL,"
-                + "`issuer` varchar(36) NOT NULL,"
-                + "`target` varchar(36) NOT NULL,"
-                + "`issueReason` varchar(200) NOT NULL,"
-                + "`issuedOn` bigint NOT NULL) DEFAULT CHARSET=utf8;",
+            + "`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,"
+            + "`server` varchar(200) NOT NULL,"
+            + "`issuer` varchar(36) NOT NULL,"
+            + "`target` varchar(36) NOT NULL,"
+            + "`issueReason` varchar(200) NOT NULL,"
+            + "`issuedOn` bigint NOT NULL) DEFAULT CHARSET=utf8;",
             (result) -> {})
         );
         handlers.put(Mute.class, () -> Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + MUTE_TABLE_NAME + "` ("
-                + "`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-                + "`server` varchar(200) NOT NULL,"
-                + "`issuer` varchar(36) NOT NULL,"
-                + "`target` varchar(36) NOT NULL,"
-                + "`issueReason` varchar(200) NOT NULL,"
-                + "`issuedOn` bigint NOT NULL,"
-                + "`until` bigint NOT NULL,"
-                + "`liftedBy` varchar(36),"
-                + "`liftedOn` bigint,"
-                + "`liftReason` varchar(200),"
-                + "`active` tinyint(1) NOT NULL) DEFAULT CHARSET=utf8;",
+            + "`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,"
+            + "`server` varchar(200) NOT NULL,"
+            + "`issuer` varchar(36) NOT NULL,"
+            + "`target` varchar(36) NOT NULL,"
+            + "`issueReason` varchar(200) NOT NULL,"
+            + "`issuedOn` bigint NOT NULL,"
+            + "`until` bigint NOT NULL,"
+            + "`liftedBy` varchar(36),"
+            + "`liftedOn` bigint,"
+            + "`liftReason` varchar(200),"
+            + "`active` tinyint(1) NOT NULL) DEFAULT CHARSET=utf8;",
             (result) -> {})
         );
         handlers.put(Blacklist.class, () -> Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + BLACKLIST_TABLE_NAME + "` ("
-                + "`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-                + "`server` varchar(200) NOT NULL,"
-                + "`issuer` varchar(36) NOT NULL,"
-                + "`target` varchar(36) NOT NULL,"
-                + "`issueReason` varchar(200) NOT NULL,"
-                + "`issuedOn` bigint NOT NULL,"
-                + "`liftedBy` varchar(36),"
-                + "`liftedOn` bigint,"
-                + "`liftReason` varchar(200),"
-                + "`active` tinyint(1) NOT NULL) DEFAULT CHARSET=utf8;",
+            + "`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,"
+            + "`server` varchar(200) NOT NULL,"
+            + "`issuer` varchar(36) NOT NULL,"
+            + "`target` varchar(36) NOT NULL,"
+            + "`issueReason` varchar(200) NOT NULL,"
+            + "`issuedOn` bigint NOT NULL,"
+            + "`liftedBy` varchar(36),"
+            + "`liftedOn` bigint,"
+            + "`liftReason` varchar(200),"
+            + "`active` tinyint(1) NOT NULL) DEFAULT CHARSET=utf8;",
             (result) -> {})
         );
         Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + ALTS_TABLE_NAME + "` ("
@@ -101,7 +101,8 @@ public class Achilles extends JavaPlugin {
             + "`username` varchar(16) NOT NULL,"
             + "`ip` varchar(15) NOT NULL,"
             + "`lastLogin` bigint NOT NULL) DEFAULT CHARSET=utf8;",
-            (result) -> {});
+            (result) -> {}
+        );
     }
 
     @Override

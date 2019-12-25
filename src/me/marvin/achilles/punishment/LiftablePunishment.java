@@ -14,11 +14,11 @@ public abstract class LiftablePunishment extends Punishment {
 
     protected abstract void liftPunishment();
 
-    public void lift() {
+    public final void lift() {
         Preconditions.checkNotNull(liftedBy, "liftedby was null");
         Preconditions.checkNotNull(liftReason, "liftreason was null");
         liftedOn = System.currentTimeMillis();
         active = false;
-        liftPunishment();
+        this.liftPunishment();
     }
 }

@@ -74,7 +74,7 @@ public class Config {
 
                 ConfigResolver<?> resolver = resolverMap.get(field.getType());
                 if (resolver == null) {
-                    plugin.getLogger().warning("Skipping field \"" + field.getName() + "\" in class " + clazz.getName() + " , because it has @ConfigPath annotation, but doesn't have a registered resolver.");
+                    plugin.getLogger().warning("Skipping field \"" + field.getName() + "\" in class " + clazz.getName() + " , because it has @ConfigPath annotation, but doesn't have a registered resolver for it's type.");
                     continue;
                 }
 
