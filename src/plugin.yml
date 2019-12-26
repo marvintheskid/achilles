@@ -19,3 +19,19 @@ permissions:
   achilles.checkalts:
     description: Permission for checking alts.
     default: false
+  achilles.ban.*:
+    children:
+      - achilles.ban.issue
+      - achilles.ban.lift
+      - achilles.ban.override
+    description: Permission for banning players.
+    default: false
+  achilles.ban.issue:
+    description: Permission for banning players.
+    default: false
+  achilles.ban.lift:
+    description: Permission for unbanning players.
+    default: false
+  achilles.ban.override:
+    description: Permission for overriding existing bans.
+    default: false

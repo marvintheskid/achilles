@@ -9,7 +9,11 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public class Mute extends ExpirablePunishment {
-    public Mute() {}
+    public Mute() {
+        this.active = true;
+        this.server = Variables.Database.SERVER_NAME;
+        this.issuedOn = System.currentTimeMillis();
+    }
 
     public Mute(UUID issuer, UUID target, long until, String reason) {
         this.issuer = issuer;

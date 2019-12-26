@@ -2,7 +2,7 @@ package me.marvin.achilles.listener;
 
 import me.marvin.achilles.Achilles;
 import me.marvin.achilles.Language;
-import me.marvin.achilles.profile.Profile;
+import me.marvin.achilles.profile.impl.FullProfile;
 import me.marvin.achilles.punishment.Punishment;
 import me.marvin.achilles.punishment.impl.Mute;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ public class ChatListener implements Listener {
     @EventHandler
     void onChat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
-        Profile prof = Achilles.getProfileHandler().getProfile(p.getUniqueId());
+        FullProfile prof = Achilles.getProfileHandler().getProfile(p.getUniqueId());
         if (prof == null) {
             Achilles.getInstance().getLogger().warning("[Chat] Tried to get profile for player " + p.getUniqueId() + " (" + p.getName() + "), but it failed.");
             return;

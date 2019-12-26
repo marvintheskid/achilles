@@ -2,6 +2,7 @@ package me.marvin.achilles.profile;
 
 import lombok.Getter;
 import me.marvin.achilles.Achilles;
+import me.marvin.achilles.profile.impl.FullProfile;
 import org.bukkit.Bukkit;
 
 import java.util.Map;
@@ -10,19 +11,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 public class ProfileHandler {
-    private Map<UUID, Profile> profiles;
+    private Map<UUID, FullProfile> profiles;
 
     public ProfileHandler() {
         this.profiles = new ConcurrentHashMap<>();
         Bukkit.getScheduler().runTaskTimerAsynchronously(Achilles.getInstance(), new CleanupTask(), 20L * 60 * 5, 20L * 60 * 5);
     }
 
-    public Profile getProfile(UUID uuid) {
+    public FullProfile getProfile(UUID uuid) {
         return this.getProfile(uuid, true);
     }
 
-    public Profile getProfile(UUID uuid, boolean async) {
-        return profiles.computeIfAbsent(uuid, (ignored) -> new Profile().load(async));
+    public FullProfile getProfile(UUID uuid, boolean async) {
+        return profiles.computeIfAbsent(uuid, (ignored) -> new FullProfile(uuid).load(async));
     }
 
     private class CleanupTask implements Runnable {

@@ -10,7 +10,10 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public class Kick extends Punishment {
-    public Kick() {}
+    public Kick() {
+        this.server = Variables.Database.SERVER_NAME;
+        this.issuedOn = System.currentTimeMillis();
+    }
 
     public Kick(UUID issuer, UUID target, String reason) {
         this.issuer = issuer;

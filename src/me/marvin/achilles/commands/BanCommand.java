@@ -1,0 +1,87 @@
+package me.marvin.achilles.commands;
+
+import me.marvin.achilles.Achilles;
+import me.marvin.achilles.Language;
+import me.marvin.achilles.Variables;
+import me.marvin.achilles.messenger.Message;
+import me.marvin.achilles.messenger.MessageType;
+import me.marvin.achilles.profile.Profile;
+import me.marvin.achilles.profile.impl.SimpleProfile;
+import me.marvin.achilles.punishment.ExpirablePunishment;
+import me.marvin.achilles.punishment.Punishment;
+import me.marvin.achilles.punishment.impl.Ban;
+import me.marvin.achilles.utils.Pair;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import static me.marvin.achilles.Language.Ban.*;
+import static me.marvin.achilles.utils.etc.StringUtils.*;
+import static me.marvin.achilles.utils.etc.PlayerUtils.*;
+
+public class BanCommand extends Command {
+    public BanCommand() {
+        super("ban");
+        setDescription("Bans people.");
+        setPermission("achilles.ban.issue");
+        setPermissionMessage(colorize(Language.Other.NO_PERMISSION));
+        setUsage(colorize(USAGE));
+    }
+
+    @Override
+    public boolean execute(CommandSender sender, String label, String[] args) {
+        if (args.length < 1) {
+            sender.sendMessage(USAGE);
+            return false;
+        }
+
+        UUID issuer;
+        String issuerName;
+
+        if (sender instanceof Player) {
+            issuer = ((Player) sender).getUniqueId();
+            issuerName = sender.getName();
+        } else {
+            issuer = Punishment.CONSOLE_UUID;
+            issuerName = Language.Other.CONSOLE_NAME;
+        }
+
+        OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
+        String targetName = getPlayerName(args[0]);
+        SimpleProfile profile = new SimpleProfile(target.getUniqueId());
+        Optional<Ban> currentBan = profile.getActive(Ban.class);
+
+        if (!sender.hasPermission("achilles.ban.override") && currentBan.isPresent() && currentBan.get().isPermanent()) {
+            sender.sendMessage(colorize(Language.Other.NO_PERMISSION_TO_OVERRIDE));
+            return false;
+        }
+
+        Pair<String, Boolean> formatted = formatFully(args, DEFAULT_REASON);
+        Ban ban = new Ban(issuer, target.getUniqueId(), ExpirablePunishment.PERMANENT_PUNISHMENT, formatted.getKey());
+        ban.issue();
+
+        String alertMsg = ALERT_MESSAGE
+            .replace("{issuer}", issuerName)
+            .replace("{target}", targetName)
+            .replace("{silent}", formatted.getValue() ? SILENT : "")
+            .replace("{server}", Variables.Database.SERVER_NAME);
+
+        if (target.isOnline()) {
+            Message message = new Message(MessageType.MESSAGE, alertMsg);
+            Bukkit.getPlayer(target.getUniqueId()).kickPlayer(PUNISHMENT_MESSAGE);
+            Achilles.getMessenger().sendMessage(message);
+        } else {
+            Message message = new Message(MessageType.MESSAGE, alertMsg);
+            Message kickReq = new Message(MessageType.KICK_REQUEST, target.getUniqueId().toString());
+            Achilles.getMessenger().sendMessage(message);
+            Achilles.getMessenger().sendMessage(kickReq);
+        }
+
+        return true;
+    }
+}

@@ -10,7 +10,11 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public class Blacklist extends LiftablePunishment {
-    public Blacklist() {}
+    public Blacklist() {
+        this.active = true;
+        this.server = Variables.Database.SERVER_NAME;
+        this.issuedOn = System.currentTimeMillis();
+    }
 
     public Blacklist(UUID issuer, UUID target, String reason) {
         this.issuer = issuer;

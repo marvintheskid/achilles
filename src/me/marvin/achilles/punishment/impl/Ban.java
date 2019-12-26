@@ -9,7 +9,11 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public class Ban extends ExpirablePunishment {
-    public Ban() {}
+    public Ban() {
+        this.active = true;
+        this.server = Variables.Database.SERVER_NAME;
+        this.issuedOn = System.currentTimeMillis();
+    }
 
     public Ban(UUID issuer, UUID target, long until, String reason) {
         this.issuer = issuer;
