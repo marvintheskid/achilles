@@ -20,7 +20,7 @@ public abstract class ExpirablePunishment extends LiftablePunishment {
     }
 
     public final boolean isExpired() {
-        return !isPermanent() && getRemaining() == 0;
+        return !isActive() && !isPermanent() && getRemaining() == 0;
     }
 
     public final long getRemaining() {

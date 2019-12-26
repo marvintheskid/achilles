@@ -30,7 +30,7 @@ public class SQLMessenger extends Messenger {
             }
         });
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(Achilles.getInstance(), housekeeperRunnable, Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD, Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(Achilles.getInstance(), housekeeperRunnable, Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD * 20L, Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD * 20L);
         Bukkit.getScheduler().runTaskTimerAsynchronously(Achilles.getInstance(), pollRunnable, Variables.Messenger.SQL.POLL_RATE, Variables.Messenger.SQL.POLL_RATE);
     }
 
@@ -51,7 +51,7 @@ public class SQLMessenger extends Messenger {
         Achilles.getConnection().query(true, "SELECT * FROM `" + Variables.Messenger.SQL.TABLE_NAME + "` WHERE `id` > ? AND (NOW() - `timestamp` > " + Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD + ")",
             (result) -> {
                 try {
-                    if (result.next()) {
+                    while (result.next()) {
                         long id = result.getLong("id");
                         this.lastMessage = Math.max(this.lastMessage, id);
                         MessageType type = MessageType.fromId(result.getInt("type"));
