@@ -15,9 +15,19 @@ database:
     alts: "achilles_alts"
 # Redis messenger
 messenger:
-  host: 127.0.0.1
+  # SQL vagy REDIS
+  type: SQL
+
+  # Az alap adatbáziscsatlakozást fogja felhasználni ebben az esetben.
+  sql:
+    poll-rate: 20
+    housekeep-threshold: 30
+    message-timestamp-limit: 30
+    table-name: "achilles_messages"
+
+  redis:
+    host: 127.0.0.1
     port: 6379
-    user: root
     auth:
       authenticate: false
       password: password

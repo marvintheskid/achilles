@@ -10,5 +10,6 @@
     <orderEntry type="library" name="org.spigotmc:spigot-api:1.8-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="com.zaxxer:HikariCP:3.4.1" level="project" />
     <orderEntry type="library" name="org.projectlombok:lombok:1.18.2" level="project" />
+    <orderEntry type="library" name="redis.clients:jedis:3.1.0" level="project" />
   </component>
 </module>

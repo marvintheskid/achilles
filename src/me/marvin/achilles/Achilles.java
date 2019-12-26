@@ -5,6 +5,9 @@ import me.marvin.achilles.listener.ChatListener;
 import me.marvin.achilles.listener.JoinListener;
 import me.marvin.achilles.listener.LoginListener;
 import me.marvin.achilles.listener.QuitListener;
+import me.marvin.achilles.messenger.Messenger;
+import me.marvin.achilles.messenger.impl.RedisMessenger;
+import me.marvin.achilles.messenger.impl.SQLMessenger;
 import me.marvin.achilles.profile.ProfileHandler;
 import me.marvin.achilles.punishment.Punishment;
 import me.marvin.achilles.punishment.PunishmentHandler;
@@ -26,6 +29,7 @@ public class Achilles extends JavaPlugin {
     @Getter private static Map<Class<? extends Punishment>, PunishmentHandler> handlers;
     @Getter private static ProfileHandler profileHandler;
     @Getter private static HikariConnection connection;
+    @Getter private static Messenger messenger;
     @Getter private static Achilles instance;
     @Getter private static Config config;
 
@@ -53,6 +57,19 @@ public class Achilles extends JavaPlugin {
                 return super.put(key, value);
             }
         };
+
+        switch (Variables.Messenger.TYPE.toUpperCase()) {
+            case "REDIS": {
+                messenger = new RedisMessenger();
+                break;
+            }
+            default:
+            case "SQL": {
+                messenger = new SQLMessenger();
+                break;
+            }
+        }
+
         initHandlers();
         Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);

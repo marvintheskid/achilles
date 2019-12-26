@@ -40,6 +40,33 @@ public class Variables {
         public static String SERVER_NAME = "";
     }
 
+    public static class Messenger {
+        @ConfigPath(path = "messenger.type", config = "config")
+        public static String TYPE = "";
+
+        public static class SQL {
+            @ConfigPath(path = "messenger.sql.poll-rate", config = "config")
+            public static long POLL_RATE = 0;
+            @ConfigPath(path = "messenger.sql.housekeep-threshold", config = "config")
+            public static long HOUSEKEEP_TRESHOLD = 0;
+            @ConfigPath(path = "messenger.sql.message-timestamp-limit", config = "config")
+            public static long MESSAGE_TIMESTAMP_LIMIT = 0;
+            @ConfigPath(path = "messenger.sql.table-name", config = "config")
+            public static String TABLE_NAME = "";
+        }
+
+        public static class Redis {
+            @ConfigPath(path = "messenger.redis.host", config = "config")
+            public static String HOST = "";
+            @ConfigPath(path = "messenger.redis.port", config = "config")
+            public static int PORT = 6379;
+            @ConfigPath(path = "messenger.redis.auth.authenticate", config = "config")
+            public static boolean NEED_AUTH = false;
+            @ConfigPath(path = "messenger.redis.auth.password", config = "config")
+            public static String PASSWORD = "";
+        }
+    }
+
     public static class Punishment {
         @ConfigPath(path = "punishment.active.true", config = "config")
         public static String PUNISHMENT_ACTIVE_TRUE = "";
