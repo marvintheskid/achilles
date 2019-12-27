@@ -37,7 +37,7 @@ public class SimpleProfile extends Profile {
                 while (result.next()) {
                     Punishment punishment = supplier.get();
                     punishment.fromResultSet(result);
-                    cache.computeIfAbsent(punishment.getClass(), (ignored) -> new ArrayList<>()).add(punishment);
+                    list.add(punishment);
                 }
             } catch (SQLException ex) {
                 ex.printStackTrace();

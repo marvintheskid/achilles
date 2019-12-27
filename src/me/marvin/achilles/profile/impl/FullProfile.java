@@ -2,6 +2,7 @@ package me.marvin.achilles.profile.impl;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import me.marvin.achilles.Achilles;
 import me.marvin.achilles.Variables;
 import me.marvin.achilles.profile.Profile;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Getter
 public class FullProfile extends Profile {
-    private String username;
+    @Setter private String username;
     private List<Punishment> punishments;
     private List<AltAccount> alts;
 
@@ -52,19 +53,19 @@ public class FullProfile extends Profile {
         }
 
         Achilles.getConnection().update(true, "INSERT INTO `" + Variables.Database.ALTS_TABLE_NAME + "` " +
-                "(`uuid`, `username`, `ip`, `lastlogin`)" +
-                " VALUES (?, ?, ?, ?)" +
-                " ON DUPLICATE KEY UPDATE " +
-                "`username` = ?, " +
-                "`ip` = ?, " +
-                "`lastlogin` = ?;",
+            "(`uuid`, `username`, `ip`, `lastlogin`)" +
+            " VALUES (?, ?, ?, ?)" +
+            " ON DUPLICATE KEY UPDATE " +
+            "`username` = ?, " +
+            "`ip` = ?, " +
+            "`lastlogin` = ?;",
             (result) -> {}, uuid.toString(), player.getName(), player.getAddress().getHostName(), System.currentTimeMillis(), player.getName(), player.getAddress().getHostName(), System.currentTimeMillis());
     }
 
     public void scanAlts() {
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) {
-            Achilles.getInstance().getLogger().warning("Tried to call Profile#scanAlts on profile " + uuid.toString() + " while the associated player is null.");
+            Achilles.getInstance().getLogger().warning("Tried to call Profile#scanAlts on profile " + uuid.toString() + " while the associated player was null.");
             return;
         }
 
@@ -97,7 +98,7 @@ public class FullProfile extends Profile {
         Achilles.getConnection().query(async, "SELECT `username` FROM `" + Variables.Database.ALTS_TABLE_NAME + "` WHERE `uuid` = ? LIMIT 1;",
             (result) -> {
                 try {
-                    if (result.next()) username = result.getString("username");
+                    if (result.next() && username == null) username = result.getString("username");
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
