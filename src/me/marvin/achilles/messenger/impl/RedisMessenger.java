@@ -65,22 +65,7 @@ public class RedisMessenger extends Messenger {
             try (Jedis jedis = pool.getResource()) {
                 try {
                     Achilles.getInstance().getLogger().info("[Messenger-Redis] Successfully subscribed to Redis!");
-                    jedis.subscribe(
-                        listener = new JedisPubSub() {
-                            @Override
-                            public void onMessage(String channel, String message) {
-                                MessageType type = MessageType.fromId(Integer.parseInt(message.split(";", 2)[0]));
-
-                                if (type == null) {
-                                    Achilles.getInstance().getLogger().warning("[Messenger-Redis] Got message with a bad type, ignoring...");
-                                    return;
-                                }
-
-                                String data = message.split(";", 2)[1];
-                                handleIncoming(new Message(type, data));
-                            }
-                        },
-                        "achilles-messenger");
+                    jedis.subscribe(listener = new RedisListener(), "achilles-messenger");
                 } catch (Exception e) {
                     e.printStackTrace();
                     listener.unsubscribe();
@@ -91,8 +76,23 @@ public class RedisMessenger extends Messenger {
 
             if (broken) {
                 Achilles.getInstance().getLogger().info("[Messenger-Redis] Trying to resubscribe with Redis...");
-                Bukkit.getScheduler().runTaskLaterAsynchronously(Achilles.getInstance(), this, 1L);
+                Bukkit.getScheduler().runTaskLaterAsynchronously(Achilles.getInstance(), this, 20L);
             }
         }
     };
+
+    private class RedisListener extends JedisPubSub {
+        @Override
+        public void onMessage(String channel, String message) {
+            MessageType type = MessageType.fromId(Integer.parseInt(message.split(";", 2)[0]));
+
+            if (type == null) {
+                Achilles.getInstance().getLogger().warning("[Messenger-Redis] Got message with a bad type, ignoring...");
+                return;
+            }
+
+            String data = message.split(";", 2)[1];
+            handleIncoming(new Message(type, data));
+        }
+    }
 }
