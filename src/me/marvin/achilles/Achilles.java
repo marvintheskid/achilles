@@ -81,6 +81,8 @@ public class Achilles extends JavaPlugin {
     @Override
     public void onDisable() {
         connection.disconnect();
+        messenger.shutdown();
+        messenger = null;
         connection = null;
         instance = null;
         profileHandler = null;
