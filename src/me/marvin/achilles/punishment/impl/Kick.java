@@ -4,6 +4,7 @@ import me.marvin.achilles.Achilles;
 import me.marvin.achilles.Variables;
 import me.marvin.achilles.punishment.LiftablePunishment;
 import me.marvin.achilles.punishment.Punishment;
+import me.marvin.achilles.utils.UUIDConverter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,14 +32,14 @@ public class Kick extends Punishment {
             "`target`, " +
             "`issueReason`, " +
             "`issuedOn`) VALUES (?, ?, ?, ?, ?);",
-            (result) -> {}, server, issuer.toString(), target.toString(), issueReason, issuedOn);
+            (result) -> {}, server, UUIDConverter.to(issuer), UUIDConverter.to(target), issueReason, issuedOn);
     }
 
     @Override
     public void fromResultSet(ResultSet rs) throws SQLException {
         this.server = rs.getString("server");
-        this.issuer = UUID.fromString(rs.getString("issuer"));
-        this.target = UUID.fromString(rs.getString("target"));
+        this.issuer = UUIDConverter.from(rs.getBytes("issuer"));
+        this.target = UUIDConverter.from(rs.getBytes("target"));
         this.issueReason = rs.getString("issueReason");
         this.issuedOn = rs.getLong("issuedOn");
     }

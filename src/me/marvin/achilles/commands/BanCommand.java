@@ -5,7 +5,6 @@ import me.marvin.achilles.Language;
 import me.marvin.achilles.Variables;
 import me.marvin.achilles.messenger.Message;
 import me.marvin.achilles.messenger.MessageType;
-import me.marvin.achilles.profile.Profile;
 import me.marvin.achilles.profile.impl.SimpleProfile;
 import me.marvin.achilles.punishment.ExpirablePunishment;
 import me.marvin.achilles.punishment.Punishment;

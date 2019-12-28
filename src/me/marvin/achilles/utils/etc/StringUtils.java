@@ -1,11 +1,7 @@
 package me.marvin.achilles.utils.etc;
 
-import me.marvin.achilles.punishment.ExpirablePunishment;
-import me.marvin.achilles.punishment.impl.Ban;
 import me.marvin.achilles.utils.Pair;
 import org.bukkit.ChatColor;
-
-import static me.marvin.achilles.Language.Ban.DEFAULT_REASON;
 
 public class StringUtils {
     public static String colorize(String str) {

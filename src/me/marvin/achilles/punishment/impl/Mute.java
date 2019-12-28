@@ -3,6 +3,7 @@ package me.marvin.achilles.punishment.impl;
 import me.marvin.achilles.Achilles;
 import me.marvin.achilles.Variables;
 import me.marvin.achilles.punishment.ExpirablePunishment;
+import me.marvin.achilles.utils.UUIDConverter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,7 +36,7 @@ public class Mute extends ExpirablePunishment {
             "`until`, " +
             "`issuedOn`, " +
             "`active`) VALUES (?, ?, ?, ?, ?, ?, ?);",
-            (result) -> {}, server, issuer.toString(), target.toString(), issueReason, until, issuedOn, active);
+            (result) -> {}, server, UUIDConverter.to(issuer), UUIDConverter.to(target), issueReason, until, issuedOn, active);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class Mute extends ExpirablePunishment {
             "liftedBy = ? " +
             "WHERE target = ? " +
             "AND id = ?;",
-            (result) -> {}, active, liftedOn, liftReason, liftedBy.toString(), target.toString(), id);
+            (result) -> {}, active, liftedOn, liftReason, UUIDConverter.to(liftedBy), UUIDConverter.to(target), id);
     }
 
     @Override
@@ -57,21 +58,21 @@ public class Mute extends ExpirablePunishment {
             "active = ?, " +
             "WHERE target = ? " +
             "AND id = ?;",
-            (result) -> {}, active, target.toString(), id);
+            (result) -> {}, active, UUIDConverter.to(target), id);
     }
 
     @Override
     public void fromResultSet(ResultSet rs) throws SQLException {
         this.server = rs.getString("server");
-        this.issuer = UUID.fromString(rs.getString("issuer"));
-        this.target = UUID.fromString(rs.getString("target"));
+        this.issuer = UUIDConverter.from(rs.getBytes("issuer"));
+        this.target = UUIDConverter.from(rs.getBytes("target"));
         this.issueReason = rs.getString("issueReason");
         this.until = rs.getLong("until");
         this.issuedOn = rs.getLong("issuedOn");
         this.active = rs.getBoolean("active");
         this.id = rs.getInt("id");
         if (!this.active) {
-            this.liftedBy = UUID.fromString(rs.getString("liftedBy"));
+            this.liftedBy = UUIDConverter.from(rs.getBytes("liftedBy"));
             this.liftReason = rs.getString("liftReason");
             this.liftedOn = rs.getLong("liftedOn");
         }

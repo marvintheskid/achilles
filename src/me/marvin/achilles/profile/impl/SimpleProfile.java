@@ -5,6 +5,7 @@ import me.marvin.achilles.profile.Profile;
 import me.marvin.achilles.punishment.LiftablePunishment;
 import me.marvin.achilles.punishment.Punishment;
 import me.marvin.achilles.punishment.PunishmentHandlerData;
+import me.marvin.achilles.utils.UUIDConverter;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -42,7 +43,7 @@ public class SimpleProfile extends Profile {
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
-        }, uuid.toString());
+        }, UUIDConverter.to(uuid));
         return list;
     }
 }

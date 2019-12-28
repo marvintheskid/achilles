@@ -14,6 +14,7 @@ import me.marvin.achilles.punishment.impl.Ban;
 import me.marvin.achilles.punishment.impl.Blacklist;
 import me.marvin.achilles.punishment.impl.Kick;
 import me.marvin.achilles.punishment.impl.Mute;
+import me.marvin.achilles.utils.UUIDConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -40,7 +41,6 @@ public class FullProfile extends Profile {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public <T extends LiftablePunishment> Optional<T> getActive(Class<? extends T> type) {
         return (Optional<T>) ((List<? extends LiftablePunishment>) getPunishments(type)).stream().filter(LiftablePunishment::isActive).min(Comparator.comparingLong(Punishment::getId));
     }
@@ -59,7 +59,7 @@ public class FullProfile extends Profile {
             "`username` = ?, " +
             "`ip` = ?, " +
             "`lastlogin` = ?;",
-            (result) -> {}, uuid.toString(), player.getName(), player.getAddress().getHostName(), System.currentTimeMillis(), player.getName(), player.getAddress().getHostName(), System.currentTimeMillis());
+            (result) -> {}, UUIDConverter.to(uuid), player.getName(), player.getAddress().getHostName(), System.currentTimeMillis(), player.getName(), player.getAddress().getHostName(), System.currentTimeMillis());
     }
 
     public void scanAlts() {
@@ -69,11 +69,11 @@ public class FullProfile extends Profile {
             return;
         }
 
-        Achilles.getConnection().query(true, "SELECT * FROM `" + Variables.Database.ALTS_TABLE_NAME + "` WHERE `ip` = ? LIMIT 1;",
+        Achilles.getConnection().query(true, "SELECT * FROM `" + Variables.Database.ALTS_TABLE_NAME + "` WHERE `ip` = ?;",
             (result) -> {
                 try {
                     while (result.next()) {
-                        AltAccount account = new AltAccount(UUID.fromString(result.getString("uuid")), result.getString("username"));
+                        AltAccount account = new AltAccount(UUIDConverter.from(result.getBytes("uuid")), result.getString("username"));
                         checkPunishmentsFor(account, Variables.Database.BAN_TABLE_NAME);
                         checkPunishmentsFor(account, Variables.Database.BLACKLIST_TABLE_NAME);
                         alts.add(account);
@@ -102,7 +102,7 @@ public class FullProfile extends Profile {
                 } catch (SQLException ex) {
                     ex.printStackTrace();
                 }
-            }, uuid.toString()
+            }, UUIDConverter.to(uuid)
         );
 
         return this;
@@ -123,7 +123,7 @@ public class FullProfile extends Profile {
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
-        }, uuid.toString());
+        }, UUIDConverter.to(uuid));
     }
 
     private void checkPunishmentsFor(AltAccount account, String table) {
@@ -135,6 +135,6 @@ public class FullProfile extends Profile {
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
-        }, account.getUuid().toString(), true);
+        }, UUIDConverter.to(account.getUuid()), true);
     }
 }

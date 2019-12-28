@@ -4,6 +4,7 @@ import me.marvin.achilles.Achilles;
 import me.marvin.achilles.Variables;
 import me.marvin.achilles.punishment.ExpirablePunishment;
 import me.marvin.achilles.punishment.LiftablePunishment;
+import me.marvin.achilles.utils.UUIDConverter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,7 +35,7 @@ public class Blacklist extends LiftablePunishment {
             "`issueReason`, " +
             "`issuedOn`, " +
             "`active`) VALUES (?, ?, ?, ?, ?, ?, ?);",
-            (result) -> {}, server, issuer.toString(), target.toString(), issueReason, issuedOn, active);
+            (result) -> {}, server, UUIDConverter.to(issuer), UUIDConverter.to(target), issueReason, issuedOn, active);
     }
 
     @Override
@@ -46,20 +47,20 @@ public class Blacklist extends LiftablePunishment {
             "liftedBy = ? " +
             "WHERE target = ? " +
             "AND id = ?;",
-            (result) -> {}, active, liftedOn, liftReason, liftedBy.toString(), target.toString(), id);
+            (result) -> {}, active, liftedOn, liftReason, UUIDConverter.to(liftedBy), UUIDConverter.to(target), id);
     }
 
     @Override
     public void fromResultSet(ResultSet rs) throws SQLException {
         this.server = rs.getString("server");
-        this.issuer = UUID.fromString(rs.getString("issuer"));
-        this.target = UUID.fromString(rs.getString("target"));
+        this.issuer = UUIDConverter.from(rs.getBytes("issuer"));
+        this.target = UUIDConverter.from(rs.getBytes("target"));
         this.issueReason = rs.getString("issueReason");
         this.issuedOn = rs.getLong("issuedOn");
         this.active = rs.getBoolean("active");
         this.id = rs.getInt("id");
         if (!this.active) {
-            this.liftedBy = UUID.fromString(rs.getString("liftedBy"));
+            this.liftedBy = UUIDConverter.from(rs.getBytes("liftedBy"));
             this.liftReason = rs.getString("liftReason");
             this.liftedOn = rs.getLong("liftedOn");
         }

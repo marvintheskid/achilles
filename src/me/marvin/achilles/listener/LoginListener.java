@@ -2,7 +2,6 @@ package me.marvin.achilles.listener;
 
 import me.marvin.achilles.Achilles;
 import me.marvin.achilles.Language;
-import me.marvin.achilles.profile.Profile;
 import me.marvin.achilles.profile.impl.FullProfile;
 import me.marvin.achilles.punishment.ExpirablePunishment;
 import me.marvin.achilles.punishment.impl.Ban;
@@ -11,7 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,7 +20,7 @@ public class LoginListener implements Listener {
     @EventHandler
     void onLogin(AsyncPlayerPreLoginEvent e) {
         UUID uuid = e.getUniqueId();
-        FullProfile profile = Achilles.getProfileHandler().getProfile(uuid, false);
+        FullProfile profile = Achilles.getProfileHandler().getOrCreateProfile(uuid, false);
 
         if (profile == null) {
             e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, colorize(Language.Other.FAILED_TO_LOAD));
