@@ -2,10 +2,12 @@ package me.marvin.achilles.punishment;
 
 import com.google.common.base.Preconditions;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
 @Getter
+@Setter
 public abstract class LiftablePunishment extends Punishment {
     protected UUID liftedBy;
     protected String liftReason;

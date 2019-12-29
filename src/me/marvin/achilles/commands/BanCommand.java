@@ -29,13 +29,12 @@ public class BanCommand extends WrappedCommand {
         setDescription("Bans people.");
         setPermission("achilles.ban.issue");
         setPermissionMessage(colorize(Language.Other.NO_PERMISSION));
-        setUsage(colorize(USAGE));
     }
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (args.length < 1) {
-            sender.sendMessage(USAGE);
+            sender.sendMessage(colorize(USAGE));
             return false;
         }
 
@@ -55,9 +54,16 @@ public class BanCommand extends WrappedCommand {
         SimpleProfile profile = new SimpleProfile(target.getUniqueId());
         Optional<Ban> currentBan = profile.getActive(Ban.class);
 
-        if (!sender.hasPermission("achilles.ban.override") && currentBan.isPresent() && currentBan.get().isPermanent()) {
-            sender.sendMessage(colorize(Language.Other.NO_PERMISSION_TO_OVERRIDE));
-            return false;
+        if (currentBan.isPresent()) {
+            if (!sender.hasPermission("achilles.ban.override") && currentBan.get().isPermanent()) {
+                sender.sendMessage(colorize(Language.Other.NO_PERMISSION_TO_OVERRIDE));
+                return false;
+            } else {
+                Ban current = currentBan.get();
+                current.setLiftedBy(issuer);
+                current.setLiftReason(Language.Other.OVERRIDE_REASON);
+                current.lift();
+            }
         }
 
         Pair<String, Boolean> formatted = formatFully(args, DEFAULT_REASON);

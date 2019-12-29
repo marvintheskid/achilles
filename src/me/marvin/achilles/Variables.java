@@ -4,7 +4,6 @@ import me.marvin.achilles.utils.config.ConfigPath;
 import me.marvin.achilles.utils.config.InitializeAfterConfig;
 
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Locale;
 
 public class Variables {

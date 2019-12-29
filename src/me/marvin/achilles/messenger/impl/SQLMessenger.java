@@ -16,11 +16,10 @@ public class SQLMessenger extends Messenger {
     public void initialize() {
         Achilles.getConnection().update(true, "CREATE TABLE IF NOT EXISTS `" + Variables.Messenger.SQL.TABLE_NAME + "` ("
                 + "`id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-                + "`type` int NOT NULL,"
-                + "`data` varchar NOT NULL,"
-                + "`timestamp` timestamp DEFAULT NOW()) DEFAULT CHARSET=utf8;",
-            (result) -> {
-            }
+                + "`type` smallint(32) NOT NULL,"
+                + "`data` text NOT NULL,"
+                + "`timestamp` timestamp NOT NULL) DEFAULT CHARSET=utf8;",
+            (result) -> {}
         );
 
         Achilles.getConnection().query(true, "SELECT MAX(`id`) AS `last` FROM `" + Variables.Messenger.SQL.TABLE_NAME + "`", (result) -> {
@@ -38,7 +37,7 @@ public class SQLMessenger extends Messenger {
         }, Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD * 20L, Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD * 20L);
 
         Bukkit.getScheduler().runTaskTimerAsynchronously(Achilles.getInstance(), () -> {
-            Achilles.getConnection().query(true, "SELECT * FROM `" + Variables.Messenger.SQL.TABLE_NAME + "` WHERE `id` > ? AND (NOW() - `timestamp` > " + Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD + ")",
+            Achilles.getConnection().query(true, "SELECT * FROM `" + Variables.Messenger.SQL.TABLE_NAME + "` WHERE `id` > ? AND (NOW() - `timestamp` < " + Variables.Messenger.SQL.MESSAGE_TIMESTAMP_LIMIT + ")",
                 (result) -> {
                     try {
                         while (result.next()) {
@@ -47,8 +46,7 @@ public class SQLMessenger extends Messenger {
                             MessageType type = MessageType.fromId(result.getInt("type"));
                             if (type == null) {
                                 Achilles.getInstance().getLogger().warning("[Messenger-SQL] Got message with a bad type (id: " + id + "), deleting entry...");
-                                Achilles.getConnection().update(true, "DELETE FROM `" + Variables.Messenger.SQL.TABLE_NAME + "` WHERE `id` = ?", (response) -> {
-                                }, id);
+                                Achilles.getConnection().update(true, "DELETE FROM `" + Variables.Messenger.SQL.TABLE_NAME + "` WHERE `id` = ?", (response) -> {}, id);
                                 return;
                             }
                             String data = result.getString("data");
@@ -57,16 +55,15 @@ public class SQLMessenger extends Messenger {
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
-                }
+                }, lastMessage
             );
         }, Variables.Messenger.SQL.POLL_RATE, Variables.Messenger.SQL.POLL_RATE);
     }
 
     @Override
     public void sendMessage(Message message) {
-        Achilles.getConnection().update(true, "INSERT INTO `" + Variables.Messenger.SQL.TABLE_NAME + "` (`type`, `data`) VALUES (?, ?)",
-            (result) -> {
-            },
+        Achilles.getConnection().update(true, "INSERT INTO `" + Variables.Messenger.SQL.TABLE_NAME + "` (`timestamp`, `type`, `data`) VALUES (NOW(), ?, ?)",
+            (result) -> {},
             message.getType().ordinal(), message.getData()
         );
     }

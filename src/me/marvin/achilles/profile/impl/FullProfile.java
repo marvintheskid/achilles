@@ -74,8 +74,8 @@ public class FullProfile extends Profile {
                 try {
                     while (result.next()) {
                         AltAccount account = new AltAccount(UUIDConverter.from(result.getBytes("uuid")), result.getString("username"));
-                        checkPunishmentsFor(account, Variables.Database.BAN_TABLE_NAME);
-                        checkPunishmentsFor(account, Variables.Database.BLACKLIST_TABLE_NAME);
+                        checkPunishmentsFor(account, Blacklist.class);
+                        checkPunishmentsFor(account, Ban.class);
                         alts.add(account);
                     }
                 } catch (SQLException ex) {
@@ -126,8 +126,12 @@ public class FullProfile extends Profile {
         }, UUIDConverter.to(uuid));
     }
 
-    private void checkPunishmentsFor(AltAccount account, String table) {
-        Achilles.getConnection().query(true, "SELECT * FROM `" + table + "` WHERE `target` = ? AND `active` = ?", (result) -> {
+    private void checkPunishmentsFor(AltAccount account, Class<? extends Punishment> type) {
+        PunishmentHandlerData data = Achilles.getHandlers().get(type);
+        if (data == null) {
+            throw new RuntimeException("found no handlers for punishment " + type.getSimpleName());
+        }
+        Achilles.getConnection().query(true, "SELECT * FROM `" + data.getTable() + "` WHERE `target` = ? AND `active` = ?", (result) -> {
             try {
                 if (result.next()) {
                     account.setPunished(true);

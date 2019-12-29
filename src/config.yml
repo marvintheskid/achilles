@@ -11,7 +11,7 @@ database:
     bans: "achilles_bans"
     mutes: "achilles_mutes"
     kicks: "achilles_kicks"
-    blacklist: "achilles_blacklists"
+    blacklists: "achilles_blacklists"
     alts: "achilles_alts"
 # Redis messenger
 messenger:
@@ -109,7 +109,7 @@ punishments:
 
 # Egyéb
 already-punished: "&cThis player is already punished."
-override-reason: "Overridden by {sender}"
+override-reason: "Overridden"
 failed-to-load-player-profile: "&cSomething went wrong while tried to load target's profile."
 target-is-offline: '&cTarget is offline!'
 no-permission: "&cYou don't have enough permission!"

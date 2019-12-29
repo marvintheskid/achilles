@@ -82,6 +82,7 @@ public class HikariConnection {
                 result.accept(rs);
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             result.accept(null);
         }
     }
@@ -96,6 +97,7 @@ public class HikariConnection {
             }
             result.accept(stmt.executeUpdate());
         } catch (Exception ex) {
+            ex.printStackTrace();
             result.accept(-1);
         }
     }
@@ -113,6 +115,7 @@ public class HikariConnection {
             }
             result.accept(IntStream.of(stmt.executeBatch()).boxed().toArray(Integer[]::new));
         } catch (Exception ex) {
+            ex.printStackTrace();
             result.accept(new Integer[]{-1});
         }
     }

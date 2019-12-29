@@ -41,8 +41,27 @@ public class Achilles extends JavaPlugin {
         DependencyManager.loadDependencies();
         configuration = new Config("config", this);
         configuration.saveDefaultConfig();
-        configuration.loadAnnotatedValues(Language.class);
-        configuration.loadAnnotatedValues(Variables.class);
+        configuration.loadAnnotatedValues(Language.Other.class);
+        configuration.loadAnnotatedValues(Language.Ban.class);
+        configuration.loadAnnotatedValues(Language.Tempban.class);
+        configuration.loadAnnotatedValues(Language.Unban.class);
+        configuration.loadAnnotatedValues(Language.Kick.class);
+        configuration.loadAnnotatedValues(Language.Blacklist.class);
+        configuration.loadAnnotatedValues(Language.Unblacklist.class);
+        configuration.loadAnnotatedValues(Language.Mute.class);
+        configuration.loadAnnotatedValues(Language.Tempmute.class);
+        configuration.loadAnnotatedValues(Language.Unmute.class);
+
+        configuration.loadAnnotatedValues(Variables.Database.class);
+        configuration.loadAnnotatedValues(Variables.Database.Credentials.class);
+
+        configuration.loadAnnotatedValues(Variables.Messenger.class);
+        configuration.loadAnnotatedValues(Variables.Messenger.SQL.class);
+        configuration.loadAnnotatedValues(Variables.Messenger.Redis.class);
+
+        configuration.loadAnnotatedValues(Variables.Alts.class);
+        configuration.loadAnnotatedValues(Variables.Date.class);
+        configuration.loadAnnotatedValues(Variables.Punishment.class);
         profileHandler = new ProfileHandler();
         connection = new HikariConnection(
             Credentials.HOST,

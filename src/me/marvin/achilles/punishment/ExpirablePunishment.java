@@ -1,8 +1,10 @@
 package me.marvin.achilles.punishment;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public abstract class ExpirablePunishment extends LiftablePunishment {
     public static int PERMANENT_PUNISHMENT = -1;
 

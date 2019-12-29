@@ -64,7 +64,7 @@ public class Config {
     }
 
     public void loadAnnotatedValues(Class<?> clazz) {
-        for (Field field : getInheritedPrivateFields(clazz)) {
+        for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(ConfigPath.class)) {
                 String config = field.getAnnotation(ConfigPath.class).config();
                 String path = field.getAnnotation(ConfigPath.class).path();
@@ -79,14 +79,15 @@ public class Config {
                 }
 
                 try {
-                    field.set(clazz, resolver.resolve(fileConfiguration.get(path, fallback)));
+                    Object val = resolver.resolve(fileConfiguration.get(path, fallback));
+                    field.set(clazz, val);
                 } catch (IllegalAccessException ex) {
                     ex.printStackTrace();
                 }
             }
         }
 
-        for (Method method : getInheritedPrivateMethods(clazz)) {
+        for (Method method : clazz.getDeclaredMethods()) {
             if (method.isAnnotationPresent(InitializeAfterConfig.class)) {
                 if (!method.getAnnotation(InitializeAfterConfig.class).config().equalsIgnoreCase(name)) continue;
                 if (!method.isAccessible()) method.setAccessible(true);
@@ -97,25 +98,5 @@ public class Config {
                 }
             }
         }
-    }
-
-    private List<Field> getInheritedPrivateFields(Class<?> clazz) {
-        List<Field> result = new ArrayList<>();
-        Class<?> i = clazz;
-        while (i != null && i != Object.class) {
-            result.addAll(Arrays.asList(i.getDeclaredFields()));
-            i = i.getSuperclass();
-        }
-        return result;
-    }
-
-    private List<Method> getInheritedPrivateMethods(Class<?> clazz) {
-        List<Method> result = new ArrayList<>();
-        Class<?> i = clazz;
-        while (i != null && i != Object.class) {
-            result.addAll(Arrays.asList(i.getDeclaredMethods()));
-            i = i.getSuperclass();
-        }
-        return result;
     }
 }
