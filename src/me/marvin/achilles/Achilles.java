@@ -11,12 +11,12 @@ import me.marvin.achilles.messenger.impl.RedisMessenger;
 import me.marvin.achilles.messenger.impl.SQLMessenger;
 import me.marvin.achilles.profile.ProfileHandler;
 import me.marvin.achilles.punishment.Punishment;
-import me.marvin.achilles.punishment.PunishmentHandler;
 import me.marvin.achilles.punishment.PunishmentHandlerData;
 import me.marvin.achilles.punishment.impl.Ban;
 import me.marvin.achilles.punishment.impl.Blacklist;
 import me.marvin.achilles.punishment.impl.Kick;
 import me.marvin.achilles.punishment.impl.Mute;
+import me.marvin.achilles.utils.DependencyManager;
 import me.marvin.achilles.utils.config.Config;
 import me.marvin.achilles.utils.sql.HikariConnection;
 import org.bukkit.Bukkit;
@@ -33,15 +33,16 @@ public class Achilles extends JavaPlugin {
     @Getter private static HikariConnection connection;
     @Getter private static Messenger messenger;
     @Getter private static Achilles instance;
-    @Getter private static Config config;
+    @Getter private static Config configuration;
 
     @Override
     public void onEnable() {
         instance = this;
-        config = new Config("config", this);
-        config.saveDefaultConfig();
-        config.loadAnnotatedValues(Language.class);
-        config.loadAnnotatedValues(Variables.class);
+        DependencyManager.loadDependencies();
+        configuration = new Config("config", this);
+        configuration.saveDefaultConfig();
+        configuration.loadAnnotatedValues(Language.class);
+        configuration.loadAnnotatedValues(Variables.class);
         profileHandler = new ProfileHandler();
         connection = new HikariConnection(
             Credentials.HOST,
@@ -52,7 +53,8 @@ public class Achilles extends JavaPlugin {
             ASYNC,
             POOL_SIZE
         );
-        handlers = new HashMap<>() {
+        connection.connect();
+        handlers = new HashMap<Class<? extends Punishment>, PunishmentHandlerData>() {
             @Override
             public PunishmentHandlerData put(Class<? extends Punishment> key, PunishmentHandlerData value) {
                 value.getHandler().createTable();
@@ -89,7 +91,7 @@ public class Achilles extends JavaPlugin {
         connection = null;
         instance = null;
         profileHandler = null;
-        config = null;
+        configuration = null;
         handlers = null;
     }
 

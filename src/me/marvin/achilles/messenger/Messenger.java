@@ -2,6 +2,7 @@ package me.marvin.achilles.messenger;
 
 import lombok.Getter;
 import me.marvin.achilles.Achilles;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +20,13 @@ public abstract class Messenger {
         //TODO consumerek
         this.consumers.add((message -> {
             if (message.getType() == MessageType.MESSAGE) {
+                Achilles.getInstance().getLogger().info("debug: " + message.toString());
             }
         }));
 
         this.consumers.add((message -> {
             if (message.getType() == MessageType.KICK_REQUEST) {
+                Achilles.getInstance().getLogger().info("debug: " + message.toString());
             }
         }));
     }

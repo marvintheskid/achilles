@@ -1,9 +1,9 @@
 package me.marvin.achilles.messenger;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 @AllArgsConstructor
 public class Message {
     private MessageType type;
