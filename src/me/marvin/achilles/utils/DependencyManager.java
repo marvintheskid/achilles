@@ -21,7 +21,7 @@ public class DependencyManager {
     static {
         try {
             DEPENDENCIES.put("jedis-3_1_0.jar", new URL("https://repo1.maven.org/maven2/redis/clients/jedis/3.1.0/jedis-3.1.0.jar"));
-            DEPENDENCIES.put("hikaricp-3_4_1.jar", new URL("https://repo1.maven.org/maven2/redis/clients/jedis/3.1.0/jedis-3.1.0.jar"));
+            DEPENDENCIES.put("hikaricp-3_4_1.jar", new URL("https://repo1.maven.org/maven2/com/zaxxer/HikariCP/3.4.1/HikariCP-3.4.1.jar"));
         } catch (MalformedURLException ignored) {}
 
         try {
