@@ -15,9 +15,9 @@ public class RedisMessenger extends Messenger {
 
     @Override
     public void initialize() {
-        Bukkit.getScheduler().runTaskAsynchronously(Achilles.getInstance(), initRunnable);
-        Bukkit.getScheduler().runTaskAsynchronously(Achilles.getInstance(), connectRunnable);
-        Bukkit.getScheduler().runTaskTimer(Achilles.getInstance(), reconnectRunnable, 2L, 2L);
+        Bukkit.getScheduler().runTaskAsynchronously(Achilles.getInstance(), new InitializeRunnable());
+        Bukkit.getScheduler().runTaskAsynchronously(Achilles.getInstance(), new ReconnectRunnable());
+        Bukkit.getScheduler().runTaskTimer(Achilles.getInstance(), new SubscribeRunnable(), 2L, 2L);
     }
 
     @Override
@@ -35,25 +35,31 @@ public class RedisMessenger extends Messenger {
         if (pool != null) pool.close();
     }
 
-    private final Runnable initRunnable = () -> {
-        JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxTotal(12);
-        if (NEED_AUTH) {
-            pool = new JedisPool(config, HOST, PORT, 2000, PASSWORD);
-        } else {
-            pool = new JedisPool(config, HOST, PORT);
+    private class InitializeRunnable implements Runnable {
+        @Override
+        public void run() {
+            JedisPoolConfig config = new JedisPoolConfig();
+            config.setMaxTotal(12);
+            if (NEED_AUTH) {
+                pool = new JedisPool(config, HOST, PORT, 2000, PASSWORD);
+            } else {
+                pool = new JedisPool(config, HOST, PORT);
+            }
         }
-    };
+    }
 
-    private final Runnable reconnectRunnable = () -> {
-        if (listener == null || !listener.isSubscribed()) {
-            return;
+    private class SubscribeRunnable implements Runnable {
+        @Override
+        public void run() {
+            if (listener == null || !listener.isSubscribed()) {
+                return;
+            }
+
+            listener.subscribe("achilles-messenger");
         }
+    }
 
-        listener.subscribe("achilles-messenger");
-    };
-
-    private final Runnable connectRunnable = new Runnable() {
+    private class ReconnectRunnable implements Runnable {
         private boolean broken = false;
 
         @Override
@@ -79,7 +85,7 @@ public class RedisMessenger extends Messenger {
                 Bukkit.getScheduler().runTaskLaterAsynchronously(Achilles.getInstance(), this, 20L);
             }
         }
-    };
+    }
 
     private class RedisListener extends JedisPubSub {
         @Override

@@ -9,12 +9,14 @@ import org.bukkit.Bukkit;
 
 import java.sql.SQLException;
 
+import static me.marvin.achilles.Variables.Messenger.SQL.*;
+
 public class SQLMessenger extends Messenger {
     private long lastMessage = -1337;
 
     @Override
     public void initialize() {
-        Achilles.getConnection().update(true, "CREATE TABLE IF NOT EXISTS `" + Variables.Messenger.SQL.TABLE_NAME + "` ("
+        Achilles.getConnection().update(true, "CREATE TABLE IF NOT EXISTS `" + TABLE_NAME + "` ("
                 + "`id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,"
                 + "`type` smallint(32) NOT NULL,"
                 + "`data` text NOT NULL,"
@@ -22,7 +24,7 @@ public class SQLMessenger extends Messenger {
             (result) -> {}
         );
 
-        Achilles.getConnection().query(true, "SELECT MAX(`id`) AS `last` FROM `" + Variables.Messenger.SQL.TABLE_NAME + "`", (result) -> {
+        Achilles.getConnection().query(true, "SELECT MAX(`id`) AS `last` FROM `" + TABLE_NAME + "`", (result) -> {
             try {
                 if (result.next()) this.lastMessage = result.getLong("last");
             } catch (SQLException ex) {
@@ -30,34 +32,8 @@ public class SQLMessenger extends Messenger {
             }
         });
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(Achilles.getInstance(), () -> {
-            Achilles.getConnection().update(true, "DELETE FROM `" + Variables.Messenger.SQL.TABLE_NAME + "` WHERE (NOW() - `timestamp` > " + Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD + ")",
-                (result) -> {}
-            );
-        }, Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD * 20L, Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD * 20L);
-
-        Bukkit.getScheduler().runTaskTimerAsynchronously(Achilles.getInstance(), () -> {
-            Achilles.getConnection().query(true, "SELECT * FROM `" + Variables.Messenger.SQL.TABLE_NAME + "` WHERE `id` > ? AND (NOW() - `timestamp` < " + Variables.Messenger.SQL.MESSAGE_TIMESTAMP_LIMIT + ")",
-                (result) -> {
-                    try {
-                        while (result.next()) {
-                            long id = result.getLong("id");
-                            this.lastMessage = Math.max(this.lastMessage, id);
-                            MessageType type = MessageType.fromId(result.getInt("type"));
-                            if (type == null) {
-                                Achilles.getInstance().getLogger().warning("[Messenger-SQL] Got message with a bad type (id: " + id + "), deleting entry...");
-                                Achilles.getConnection().update(true, "DELETE FROM `" + Variables.Messenger.SQL.TABLE_NAME + "` WHERE `id` = ?", (response) -> {}, id);
-                                return;
-                            }
-                            String data = result.getString("data");
-                            this.handleIncoming(new Message(type, data));
-                        }
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                    }
-                }, lastMessage
-            );
-        }, Variables.Messenger.SQL.POLL_RATE, Variables.Messenger.SQL.POLL_RATE);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(Achilles.getInstance(), new HousekeepRunnable(), HOUSEKEEP_TRESHOLD * 20L, HOUSEKEEP_TRESHOLD * 20L);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(Achilles.getInstance(), new PollRunnable(), POLL_RATE, POLL_RATE);
     }
 
     @Override
@@ -71,5 +47,40 @@ public class SQLMessenger extends Messenger {
     @Override
     public void shutdown() {
         return;
+    }
+
+    private class HousekeepRunnable implements Runnable {
+        @Override
+        public void run() {
+            Achilles.getConnection().update(true, "DELETE FROM `" + TABLE_NAME + "` WHERE (NOW() - `timestamp` > " + HOUSEKEEP_TRESHOLD + ")",
+                (result) -> {}
+            );
+        }
+    }
+
+    private class PollRunnable implements Runnable {
+        @Override
+        public void run() {
+            Achilles.getConnection().query(true, "SELECT * FROM `" + TABLE_NAME + "` WHERE `id` > ? AND (NOW() - `timestamp` < " + MESSAGE_TIMESTAMP_LIMIT + ")",
+                (result) -> {
+                    try {
+                        while (result.next()) {
+                            long id = result.getLong("id");
+                            lastMessage = Math.max(lastMessage, id);
+                            MessageType type = MessageType.fromId(result.getInt("type"));
+                            if (type == null) {
+                                Achilles.getInstance().getLogger().warning("[Messenger-SQL] Got message with a bad type (id: " + id + "), deleting entry...");
+                                Achilles.getConnection().update(true, "DELETE FROM `" + TABLE_NAME + "` WHERE `id` = ?", (response) -> {}, id);
+                                return;
+                            }
+                            String data = result.getString("data");
+                            handleIncoming(new Message(type, data));
+                        }
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                }, lastMessage
+            );
+        }
     }
 }
