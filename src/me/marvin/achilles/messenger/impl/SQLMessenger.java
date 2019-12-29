@@ -15,16 +15,17 @@ public class SQLMessenger extends Messenger {
     @Override
     public void initialize() {
         Achilles.getConnection().update(true, "CREATE TABLE IF NOT EXISTS `" + Variables.Messenger.SQL.TABLE_NAME + "` ("
-            + "`id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-            + "`type` int NOT NULL,"
-            + "`data` varchar NOT NULL,"
-            + "`timestamp` timestamp DEFAULT NOW()) DEFAULT CHARSET=utf8;",
-            (result) -> {}
+                + "`id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,"
+                + "`type` int NOT NULL,"
+                + "`data` varchar NOT NULL,"
+                + "`timestamp` timestamp DEFAULT NOW()) DEFAULT CHARSET=utf8;",
+            (result) -> {
+            }
         );
 
         Achilles.getConnection().query(true, "SELECT MAX(`id`) AS `last` FROM `" + Variables.Messenger.SQL.TABLE_NAME + "`", (result) -> {
             try {
-                if (result != null && result.next()) this.lastMessage = result.getLong("last");
+                if (result.next()) this.lastMessage = result.getLong("last");
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -38,8 +39,7 @@ public class SQLMessenger extends Messenger {
 
         Bukkit.getScheduler().runTaskTimerAsynchronously(Achilles.getInstance(), () -> {
             Achilles.getConnection().query(true, "SELECT * FROM `" + Variables.Messenger.SQL.TABLE_NAME + "` WHERE `id` > ? AND (NOW() - `timestamp` > " + Variables.Messenger.SQL.HOUSEKEEP_TRESHOLD + ")",
-            (result) -> {
-                if (result != null) {
+                (result) -> {
                     try {
                         while (result.next()) {
                             long id = result.getLong("id");
@@ -58,14 +58,15 @@ public class SQLMessenger extends Messenger {
                         ex.printStackTrace();
                     }
                 }
-            });
+            );
         }, Variables.Messenger.SQL.POLL_RATE, Variables.Messenger.SQL.POLL_RATE);
     }
 
     @Override
     public void sendMessage(Message message) {
         Achilles.getConnection().update(true, "INSERT INTO `" + Variables.Messenger.SQL.TABLE_NAME + "` (`type`, `data`) VALUES (?, ?)",
-            (result) -> {},
+            (result) -> {
+            },
             message.getType().ordinal(), message.getData()
         );
     }
