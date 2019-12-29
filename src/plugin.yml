@@ -5,11 +5,7 @@ author: marvin
 website: https://github.com/marvintheskid/achilles
 
 commands:
-  pseudocommand:
-    description: pseudodescription
-    permission: pseudopermission
-    aliases:
-      - pseudoalias
+  ban:
 permissions:
   achilles.*:
     children:

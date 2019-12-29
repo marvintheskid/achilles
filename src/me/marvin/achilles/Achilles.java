@@ -1,6 +1,7 @@
 package me.marvin.achilles;
 
 import lombok.Getter;
+import me.marvin.achilles.commands.BanCommand;
 import me.marvin.achilles.listener.ChatListener;
 import me.marvin.achilles.listener.JoinListener;
 import me.marvin.achilles.listener.LoginListener;
@@ -76,6 +77,8 @@ public class Achilles extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
         Bukkit.getPluginManager().registerEvents(new QuitListener(), this);
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
+
+        new BanCommand().setExecutor(this);
     }
 
     @Override

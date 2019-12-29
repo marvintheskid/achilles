@@ -23,7 +23,7 @@ import static me.marvin.achilles.Language.Ban.*;
 import static me.marvin.achilles.utils.etc.StringUtils.*;
 import static me.marvin.achilles.utils.etc.PlayerUtils.*;
 
-public class BanCommand extends Command {
+public class BanCommand extends WrappedCommand {
     public BanCommand() {
         super("ban");
         setDescription("Bans people.");
