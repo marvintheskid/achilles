@@ -1,5 +1,6 @@
 package me.marvin.achilles.profile.impl;
 
+import lombok.Getter;
 import me.marvin.achilles.Achilles;
 import me.marvin.achilles.profile.Profile;
 import me.marvin.achilles.punishment.LiftablePunishment;
@@ -10,8 +11,8 @@ import me.marvin.achilles.utils.UUIDConverter;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
+@Getter
 public class SimpleProfile extends Profile {
     private Map<Class<? extends Punishment>, List<Punishment>> cache;
 

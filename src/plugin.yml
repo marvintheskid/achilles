@@ -10,7 +10,11 @@ permissions:
   achilles.*:
     children:
       - achilles.checkalts
+      - achilles.ban.*
     description: Master permission.
+    default: false
+  achilles.alerts:
+    description: Alert permission.
     default: false
   achilles.checkalts:
     description: Permission for checking alts.

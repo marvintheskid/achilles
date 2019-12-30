@@ -12,7 +12,6 @@ import me.marvin.achilles.punishment.impl.Ban;
 import me.marvin.achilles.utils.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -59,10 +58,12 @@ public class BanCommand extends WrappedCommand {
                 sender.sendMessage(colorize(Language.Other.NO_PERMISSION_TO_OVERRIDE));
                 return false;
             } else {
-                Ban current = currentBan.get();
-                current.setLiftedBy(issuer);
-                current.setLiftReason(Language.Other.OVERRIDE_REASON);
-                current.lift();
+                profile.getCache().get(Ban.class).forEach(punishment -> {
+                    Ban active = (Ban) punishment;
+                    active.setLiftedBy(issuer);
+                    active.setLiftReason(Language.Other.OVERRIDE_REASON);
+                    active.lift();
+                });
             }
         }
 
@@ -73,6 +74,7 @@ public class BanCommand extends WrappedCommand {
         String alertMsg = ALERT_MESSAGE
             .replace("{issuer}", issuerName)
             .replace("{target}", targetName)
+            .replace("{reason}", formatted.getKey())
             .replace("{silent}", formatted.getValue() ? SILENT : "")
             .replace("{server}", Variables.Database.SERVER_NAME);
 
