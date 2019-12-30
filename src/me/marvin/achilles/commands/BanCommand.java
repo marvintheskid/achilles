@@ -72,8 +72,21 @@ public class BanCommand extends WrappedCommand {
         Ban ban = new Ban(issuer, target.getUniqueId(), ExpirablePunishment.PERMANENT_PUNISHMENT, formatted.getKey());
         ban.issue();
 
-        JsonObject alertMsg = new JsonObject();
-        alertMsg.addProperty("message", ALERT_MESSAGE
+        String localMsg = MESSAGE
+            .replace("{issuer}", issuerName)
+            .replace("{target}", targetName)
+            .replace("{reason}", formatted.getKey())
+            .replace("{silent}", formatted.getValue() ? SILENT : "")
+            .replace("{server}", Variables.Database.SERVER_NAME);
+        String punishmentMsg = PUNISHMENT_MESSAGE
+            .replace("{issuer}", issuerName)
+            .replace("{target}", targetName)
+            .replace("{reason}", formatted.getKey())
+            .replace("{silent}", formatted.getValue() ? SILENT : "")
+            .replace("{server}", Variables.Database.SERVER_NAME);
+
+        JsonObject alertData = new JsonObject();
+        alertData.addProperty("message", ALERT_MESSAGE
             .replace("{issuer}", issuerName)
             .replace("{target}", targetName)
             .replace("{reason}", formatted.getKey())
@@ -81,20 +94,17 @@ public class BanCommand extends WrappedCommand {
             .replace("{server}", Variables.Database.SERVER_NAME));
 
         if (target.isOnline()) {
-            Message message = new Message(MessageType.MESSAGE, alertMsg);
-            Bukkit.getPlayer(target.getUniqueId()).kickPlayer(PUNISHMENT_MESSAGE
-                .replace("{issuer}", issuerName)
-                .replace("{target}", targetName)
-                .replace("{reason}", formatted.getKey())
-                .replace("{silent}", formatted.getValue() ? SILENT : "")
-                .replace("{server}", Variables.Database.SERVER_NAME));
+            Message message = new Message(MessageType.MESSAGE, alertData);
+            Bukkit.getPlayer(target.getUniqueId()).kickPlayer(punishmentMsg);
+            Bukkit.broadcast(localMsg, "achilles.alerts");
             Achilles.getMessenger().sendMessage(message);
         } else {
             JsonObject kickData = new JsonObject();
             kickData.addProperty("uuid", target.getUniqueId().toString());
+            kickData.addProperty("message", punishmentMsg);
 
             Message kickReq = new Message(MessageType.KICK_REQUEST, kickData);
-            Message message = new Message(MessageType.MESSAGE, alertMsg);
+            Message message = new Message(MessageType.MESSAGE, alertData);
             Achilles.getMessenger().sendMessage(message);
             Achilles.getMessenger().sendMessage(kickReq);
         }

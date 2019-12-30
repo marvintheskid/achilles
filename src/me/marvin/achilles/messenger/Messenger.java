@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static me.marvin.achilles.Language.Ban.PUNISHMENT_MESSAGE;
-import static me.marvin.achilles.Language.Ban.SILENT;
-
 @Getter
 public abstract class Messenger {
     protected static final JsonParser PARSER = new JsonParser();
@@ -25,9 +22,9 @@ public abstract class Messenger {
         this.consumers = new ArrayList<>();
         this.initialize();
 
-        //TODO consumerek
         this.consumers.add((message -> {
             if (message.getType() == MessageType.MESSAGE) {
+                Bukkit.broadcast(message.getData().get("message").getAsString(), "achilles.alerts");
             }
         }));
 

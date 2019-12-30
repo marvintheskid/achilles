@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 import redis.clients.jedis.*;
 
 import static me.marvin.achilles.Variables.Messenger.Redis.*;
-import static me.marvin.achilles.Variables.Messenger.SQL.TABLE_NAME;
 
 public class RedisMessenger extends Messenger {
     private JedisPubSub listener;
