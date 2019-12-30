@@ -1,5 +1,6 @@
 package me.marvin.achilles.messenger;
 
+import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -7,5 +8,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class Message {
     private MessageType type;
-    private String data;
+    private JsonObject data;
 }

@@ -1,5 +1,6 @@
 package me.marvin.achilles.messenger.impl;
 
+import com.google.gson.JsonObject;
 import me.marvin.achilles.Achilles;
 import me.marvin.achilles.Variables;
 import me.marvin.achilles.messenger.Message;
@@ -19,6 +20,7 @@ public class SQLMessenger extends Messenger {
         Achilles.getConnection().update(true, "CREATE TABLE IF NOT EXISTS `" + TABLE_NAME + "` ("
                 + "`id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,"
                 + "`type` smallint(32) NOT NULL,"
+                + "`origin` varchar(64) NOT NULL,"
                 + "`data` text NOT NULL,"
                 + "`timestamp` timestamp NOT NULL) DEFAULT CHARSET=utf8;",
             (result) -> {}
@@ -38,9 +40,9 @@ public class SQLMessenger extends Messenger {
 
     @Override
     public void sendMessage(Message message) {
-        Achilles.getConnection().update(true, "INSERT INTO `" + Variables.Messenger.SQL.TABLE_NAME + "` (`timestamp`, `type`, `data`) VALUES (NOW(), ?, ?)",
+        Achilles.getConnection().update(true, "INSERT INTO `" + Variables.Messenger.SQL.TABLE_NAME + "` (`type`, `origin`, `data`, `timestamp`) VALUES (?, ?, ?, NOW())",
             (result) -> {},
-            message.getType().ordinal(), message.getData()
+            message.getType().ordinal(), Variables.Database.SERVER_NAME, message.getData().toString()
         );
     }
 
@@ -67,13 +69,19 @@ public class SQLMessenger extends Messenger {
                         while (result.next()) {
                             long id = result.getLong("id");
                             lastMessage = Math.max(lastMessage, id);
+
+                            if (result.getString("origin").equals(Variables.Database.SERVER_NAME)) {
+                                continue;
+                            }
+
                             MessageType type = MessageType.fromId(result.getInt("type"));
                             if (type == null) {
                                 Achilles.getInstance().getLogger().warning("[Messenger-SQL] Got message with a bad type (id: " + id + "), deleting entry...");
                                 Achilles.getConnection().update(true, "DELETE FROM `" + TABLE_NAME + "` WHERE `id` = ?", (response) -> {}, id);
                                 return;
                             }
-                            String data = result.getString("data");
+
+                            JsonObject data = PARSER.parse(result.getString("data")).getAsJsonObject();
                             handleIncoming(new Message(type, data));
                         }
                     } catch (SQLException ex) {

@@ -1,5 +1,6 @@
 package me.marvin.achilles.commands;
 
+import com.google.gson.JsonObject;
 import me.marvin.achilles.Achilles;
 import me.marvin.achilles.Language;
 import me.marvin.achilles.Variables;
@@ -71,20 +72,29 @@ public class BanCommand extends WrappedCommand {
         Ban ban = new Ban(issuer, target.getUniqueId(), ExpirablePunishment.PERMANENT_PUNISHMENT, formatted.getKey());
         ban.issue();
 
-        String alertMsg = ALERT_MESSAGE
+        JsonObject alertMsg = new JsonObject();
+        alertMsg.addProperty("message", ALERT_MESSAGE
             .replace("{issuer}", issuerName)
             .replace("{target}", targetName)
             .replace("{reason}", formatted.getKey())
             .replace("{silent}", formatted.getValue() ? SILENT : "")
-            .replace("{server}", Variables.Database.SERVER_NAME);
+            .replace("{server}", Variables.Database.SERVER_NAME));
 
         if (target.isOnline()) {
             Message message = new Message(MessageType.MESSAGE, alertMsg);
-            Bukkit.getPlayer(target.getUniqueId()).kickPlayer(PUNISHMENT_MESSAGE);
+            Bukkit.getPlayer(target.getUniqueId()).kickPlayer(PUNISHMENT_MESSAGE
+                .replace("{issuer}", issuerName)
+                .replace("{target}", targetName)
+                .replace("{reason}", formatted.getKey())
+                .replace("{silent}", formatted.getValue() ? SILENT : "")
+                .replace("{server}", Variables.Database.SERVER_NAME));
             Achilles.getMessenger().sendMessage(message);
         } else {
+            JsonObject kickData = new JsonObject();
+            kickData.addProperty("uuid", target.getUniqueId().toString());
+
+            Message kickReq = new Message(MessageType.KICK_REQUEST, kickData);
             Message message = new Message(MessageType.MESSAGE, alertMsg);
-            Message kickReq = new Message(MessageType.KICK_REQUEST, target.getUniqueId().toString());
             Achilles.getMessenger().sendMessage(message);
             Achilles.getMessenger().sendMessage(kickReq);
         }

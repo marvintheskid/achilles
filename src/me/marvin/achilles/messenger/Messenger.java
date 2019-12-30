@@ -1,15 +1,23 @@
 package me.marvin.achilles.messenger;
 
+import com.google.gson.JsonParser;
 import lombok.Getter;
 import me.marvin.achilles.Achilles;
+import me.marvin.achilles.Variables;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
+
+import static me.marvin.achilles.Language.Ban.PUNISHMENT_MESSAGE;
+import static me.marvin.achilles.Language.Ban.SILENT;
 
 @Getter
 public abstract class Messenger {
+    protected static final JsonParser PARSER = new JsonParser();
     private List<Consumer<Message>> consumers;
 
     public Messenger() {
@@ -20,13 +28,13 @@ public abstract class Messenger {
         //TODO consumerek
         this.consumers.add((message -> {
             if (message.getType() == MessageType.MESSAGE) {
-                Achilles.getInstance().getLogger().info("debug: " + message.toString());
             }
         }));
 
         this.consumers.add((message -> {
             if (message.getType() == MessageType.KICK_REQUEST) {
-                Achilles.getInstance().getLogger().info("debug: " + message.toString());
+                Player p = Bukkit.getPlayer(UUID.fromString(message.getData().get("uuid").getAsString()));
+                if (p != null) p.kickPlayer(message.getData().get("message").getAsString());
             }
         }));
     }

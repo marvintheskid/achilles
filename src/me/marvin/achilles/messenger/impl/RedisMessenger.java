@@ -1,6 +1,8 @@
 package me.marvin.achilles.messenger.impl;
 
+import com.google.gson.JsonObject;
 import me.marvin.achilles.Achilles;
+import me.marvin.achilles.Variables;
 import me.marvin.achilles.messenger.Message;
 import me.marvin.achilles.messenger.MessageType;
 import me.marvin.achilles.messenger.Messenger;
@@ -8,6 +10,7 @@ import org.bukkit.Bukkit;
 import redis.clients.jedis.*;
 
 import static me.marvin.achilles.Variables.Messenger.Redis.*;
+import static me.marvin.achilles.Variables.Messenger.SQL.TABLE_NAME;
 
 public class RedisMessenger extends Messenger {
     private JedisPubSub listener;
@@ -24,7 +27,12 @@ public class RedisMessenger extends Messenger {
     public void sendMessage(Message message) {
         Bukkit.getScheduler().runTaskAsynchronously(Achilles.getInstance(), () -> {
             try (Jedis jedis = pool.getResource()) {
-                jedis.publish("achilles-messenger", message.getType().ordinal() + ";" + message.getData());
+                JsonObject object = new JsonObject();
+                object.addProperty("type", message.getType().ordinal());
+                object.addProperty("origin", Variables.Database.SERVER_NAME);
+                object.add("data", message.getData());
+
+                jedis.publish("achilles-messenger", object.toString());
             }
         });
     }
@@ -90,14 +98,29 @@ public class RedisMessenger extends Messenger {
     private class RedisListener extends JedisPubSub {
         @Override
         public void onMessage(String channel, String message) {
-            MessageType type = MessageType.fromId(Integer.parseInt(message.split(";", 2)[0]));
+            JsonObject object = PARSER.parse(message).getAsJsonObject();
 
+            if (object == null) {
+                Achilles.getInstance().getLogger().warning("[Messenger-Redis] Got message with a bad type, ignoring...");
+                return;
+            }
+
+            if (!object.has("type") || !object.has("origin") || !object.has("data")) {
+                Achilles.getInstance().getLogger().warning("[Messenger-Redis] Got a malformed message, ignoring...");
+                return;
+            }
+
+            if (object.get("origin").getAsString().equals(Variables.Database.SERVER_NAME)) {
+                return;
+            }
+
+            MessageType type = MessageType.fromId(object.get("type").getAsInt());
             if (type == null) {
                 Achilles.getInstance().getLogger().warning("[Messenger-Redis] Got message with a bad type, ignoring...");
                 return;
             }
 
-            String data = message.split(";", 2)[1];
+            JsonObject data = object.get("data").getAsJsonObject();
             handleIncoming(new Message(type, data));
         }
     }
