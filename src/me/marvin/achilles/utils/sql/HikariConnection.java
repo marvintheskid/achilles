@@ -3,6 +3,7 @@ package me.marvin.achilles.utils.sql;
 import com.google.common.base.Preconditions;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.pool.HikariProxyPreparedStatement;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

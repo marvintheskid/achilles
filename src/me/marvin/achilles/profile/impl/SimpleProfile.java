@@ -10,7 +10,6 @@ import me.marvin.achilles.utils.UUIDConverter;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.Supplier;
 
 @Getter
 public class SimpleProfile extends Profile {
@@ -28,16 +27,20 @@ public class SimpleProfile extends Profile {
             if (data == null) {
                 throw new RuntimeException("found no handlers for punishment " + type.getSimpleName());
             }
-            return getPunishmentsFromTable(data.getTable(), data.getSupplier(), true);
+            return new ArrayList<>(getPunishmentsFromTable(type, false));
         }).stream().map(punishment -> (LiftablePunishment) punishment).filter(LiftablePunishment::isActive).min(Comparator.comparingLong(Punishment::getId));
     }
 
-    private List<Punishment> getPunishmentsFromTable(String table, Supplier<? extends Punishment> supplier, boolean async) {
+    private List<Punishment> getPunishmentsFromTable(Class<? extends Punishment> type, boolean async) {
+        PunishmentHandlerData data = Achilles.getHandlers().get(type);
+        if (data == null) {
+            throw new RuntimeException("found no handlers for punishment " + type.getSimpleName());
+        }
         List<Punishment> list = new ArrayList<>();
-        Achilles.getConnection().query(async, "SELECT * FROM `" + table + "` WHERE `target` = ?", (result) -> {
+        Achilles.getConnection().query(async, "SELECT * FROM `" + data.getTable() + "` WHERE `target` = ?", (result) -> {
             try {
                 while (result.next()) {
-                    Punishment punishment = supplier.get();
+                    Punishment punishment = data.getSupplier().get();
                     punishment.fromResultSet(result);
                     list.add(punishment);
                 }

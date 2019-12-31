@@ -93,10 +93,11 @@ public class BanCommand extends WrappedCommand {
             .replace("{silent}", formatted.getValue() ? SILENT : "")
             .replace("{server}", Variables.Database.SERVER_NAME));
 
+        Bukkit.broadcast(colorize(localMsg), "achilles.alerts");
+
         if (target.isOnline()) {
             Message message = new Message(MessageType.MESSAGE, alertData);
             Bukkit.getPlayer(target.getUniqueId()).kickPlayer(punishmentMsg);
-            Bukkit.broadcast(localMsg, "achilles.alerts");
             Achilles.getMessenger().sendMessage(message);
         } else {
             JsonObject kickData = new JsonObject();

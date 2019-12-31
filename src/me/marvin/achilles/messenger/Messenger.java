@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static me.marvin.achilles.utils.etc.StringUtils.colorize;
+
 @Getter
 public abstract class Messenger {
     protected static final JsonParser PARSER = new JsonParser();
@@ -24,14 +26,14 @@ public abstract class Messenger {
 
         this.consumers.add((message -> {
             if (message.getType() == MessageType.MESSAGE) {
-                Bukkit.broadcast(message.getData().get("message").getAsString(), "achilles.alerts");
+                Bukkit.broadcast(colorize(message.getData().get("message").getAsString()), "achilles.alerts");
             }
         }));
 
         this.consumers.add((message -> {
             if (message.getType() == MessageType.KICK_REQUEST) {
                 Player p = Bukkit.getPlayer(UUID.fromString(message.getData().get("uuid").getAsString()));
-                if (p != null) p.kickPlayer(message.getData().get("message").getAsString());
+                if (p != null) p.kickPlayer(colorize(message.getData().get("message").getAsString()));
             }
         }));
     }

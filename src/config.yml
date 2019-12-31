@@ -2,8 +2,8 @@ database:
   host: 127.0.0.1
   port: 3306
   user: root
-  password: password
-  database: database
+  password: ""
+  database: achilles
   # Lásd: https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing
   pool-size: 2
   async: true
@@ -34,7 +34,7 @@ messenger:
 server-name: "Test"
 save-alts: false
   #Placeholderek:
-  # {executor}
+  # {issuer}
   # {target}
   # {server} (only works on "alert-message")
   # {silent} (gets replaced with the punishment"s "silent" string)
@@ -48,62 +48,62 @@ save-alts: false
 punishments:
   kick:
     usage: "&6Usage: &f/kick &7<player> [reason] [-s]"
-    message: "{silent}&e{target} &fhas been kicked by &6{executor}"
-    alert-message: "{silent}&7[{server}] &e{target} &fhas been kicked by &6{executor}"
+    message: "{silent}&e{target} &fhas been kicked by &6{issuer}"
+    alert-message: "{silent}&7[{server}] &e{target} &fhas been kicked by &6{issuer}"
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
     punishment-message: "&cYou got kicked."
   ban:
     usage: "&6Usage: &f/ban &7<player> [reason] [-s]"
-    message: "{silent}&e{target} &fhas been banned permanently by &6{executor}"
-    alert-message: "{silent}&7[{server}] &e{target} &fhas been banned permanently by &6{executor}"
+    message: "{silent}&e{target} &fhas been banned permanently by &6{issuer}"
+    alert-message: "{silent}&7[{server}] &e{target} &fhas been banned permanently by &6{issuer}"
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
     punishment-message: "&cYour account is permanently banned from the server."
   mute:
     usage: "&6Usage: &f/mute &7<player> [reason] [-s]"
-    message: "{silent}&e{target} &fhas been muted permanently by &6{executor}"
-    alert-message: "{silent}&7[{server}] &e{target} &fhas been muted permanently by &6{executor}"
+    message: "{silent}&e{target} &fhas been muted permanently by &6{issuer}"
+    alert-message: "{silent}&7[{server}] &e{target} &fhas been muted permanently by &6{issuer}"
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
     punishment-message: "&cYou can't talk, because you permanently are muted."
   blacklist:
     usage: "&6Usage: &f/blacklist &7<player> [reason] [-s]"
-    message: "{silent}&e{target} &fhas been blacklisted by &6{executor}"
-    alert-message: "{silent}&7[{server}] &e{target} &fhas been blacklisted by &6{executor}"
+    message: "{silent}&e{target} &fhas been blacklisted by &6{issuer}"
+    alert-message: "{silent}&7[{server}] &e{target} &fhas been blacklisted by &6{issuer}"
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
     punishment-message: "&cYour account is blacklisted from the server."
   tempban:
     usage: "&6Usage: &f/tempban &7<player> <time> [reason] [-s]"
-    message: "{silent}&e{target} &fhas been banned temporarily by &6{executor}"
-    alert-message: "{silent}&7[{server}] &e{target} &fhas been banned temporarily by &6{executor}"
+    message: "{silent}&e{target} &fhas been banned temporarily by &6{issuer}"
+    alert-message: "{silent}&7[{server}] &e{target} &fhas been banned temporarily by &6{issuer}"
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
     punishment-message: "&cYour account is temporarily banned from the server."
   tempmute:
     usage: "&6Usage: &f/tempmute &7<player> <time> [reason] [-s]"
-    message: "{silent}&e{target} &fhas been muted temporarily by &6{executor}"
-    alert-message: "{silent}&7[{server}] &e{target} &fhas been muted temporarily by &6{executor}"
+    message: "{silent}&e{target} &fhas been muted temporarily by &6{issuer}"
+    alert-message: "{silent}&7[{server}] &e{target} &fhas been muted temporarily by &6{issuer}"
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
     punishment-message: "&cYou can't talk, because you are temporarily muted."
   unban:
     usage: "&6Usage: &f/unban &7<player> [reason] [-s]"
-    message: "{silent}&e{target} &fhas been unbanned by &6{executor}"
-    alert-message: "{silent}&7[{server}] &e{target} &fhas been unbanned by &6{executor}"
+    message: "{silent}&e{target} &fhas been unbanned by &6{issuer}"
+    alert-message: "{silent}&7[{server}] &e{target} &fhas been unbanned by &6{issuer}"
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
   unmute:
     usage: "&6Usage: &f/unmute &7<player> [reason] [-s]"
-    message: "{silent}&e{target} &fhas been unmuted by &6{executor}"
-    alert-message: "{silent}&7[{server}] &e{target} &fhas been unmuted by &6{executor}"
+    message: "{silent}&e{target} &fhas been unmuted by &6{issuer}"
+    alert-message: "{silent}&7[{server}] &e{target} &fhas been unmuted by &6{issuer}"
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
   unblacklist:
     usage: "&6Usage: &f/unblacklist &7<player> [reason] [-s]"
-    message: "{silent}&e{target} &fhas been unblacklisted by &6{executor}"
-    alert-message: "{silent}&7[{server}] &e{target} &fhas been unblacklisted by &6{executor}"
+    message: "{silent}&e{target} &fhas been unblacklisted by &6{issuer}"
+    alert-message: "{silent}&7[{server}] &e{target} &fhas been unblacklisted by &6{issuer}"
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
 
