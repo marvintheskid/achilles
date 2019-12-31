@@ -21,6 +21,10 @@ public abstract class ExpirablePunishment extends LiftablePunishment {
         return until == PERMANENT_PUNISHMENT;
     }
 
+    public final boolean isTemporary() {
+        return !isPermanent();
+    }
+
     public final boolean isExpired() {
         return !isPermanent() && getRemaining() == 0;
     }

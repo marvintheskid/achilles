@@ -118,6 +118,10 @@ public class Variables {
         public static String SECOND = "";
         @ConfigPath(path = "date-formatting.seconds", config = "config")
         public static String SECONDS = "";
+        @ConfigPath(path = "date-formatting.permanent", config = "config")
+        public static String PERMANENT = "";
+        @ConfigPath(path = "date-formatting.expired", config = "config")
+        public static String EXPIRED = "";
 
         public static Locale LOCALE;
         public static SimpleDateFormat DATE_FORMAT;
