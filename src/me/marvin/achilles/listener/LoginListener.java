@@ -52,6 +52,7 @@ public class LoginListener implements Listener {
                 .replace("{reason}", blacklist.getIssueReason())
                 .replace("{server}", blacklist.getServer())
             ));
+            Achilles.getProfileHandler().getProfiles().remove(uuid);
             return;
         }
 
@@ -73,6 +74,7 @@ public class LoginListener implements Listener {
                 .replace("{server}", ban.getServer())
                 .replace("{remaining}", TimeFormatter.formatTime(ban.getRemaining()))
             ));
+            Achilles.getProfileHandler().getProfiles().remove(uuid);
             return;
         }
     }

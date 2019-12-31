@@ -1,6 +1,5 @@
 package me.marvin.achilles.profile.impl;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import me.marvin.achilles.Achilles;
