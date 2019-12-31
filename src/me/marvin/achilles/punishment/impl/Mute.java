@@ -52,10 +52,9 @@ public class Mute extends ExpirablePunishment {
     }
 
     @Override
-    public void expirePunishment() {
-        if (!active || !isExpired()) return;
+    protected void expirePunishment() {
         Achilles.getConnection().update("UPDATE `" + Variables.Database.MUTE_TABLE_NAME + "` SET " +
-            "active = ?, " +
+            "active = ? " +
             "WHERE target = ? " +
             "AND id = ?;",
             (result) -> {}, active, UUIDConverter.to(target), id);

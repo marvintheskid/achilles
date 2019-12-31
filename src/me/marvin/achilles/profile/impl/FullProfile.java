@@ -37,7 +37,7 @@ public class FullProfile extends Profile {
 
     @SuppressWarnings("unchecked")
     public <T extends Punishment> List<T> getPunishments(Class<? extends T> type) {
-        return (List<T>) Collections.unmodifiableList(punishments.stream().filter(punishment -> punishment.getClass() == type).collect(Collectors.toList()));
+        return (List<T>) Collections.unmodifiableList(punishments.stream().filter(punishment -> type.isAssignableFrom(punishment.getClass())).collect(Collectors.toList()));
     }
 
     @SuppressWarnings("unchecked")

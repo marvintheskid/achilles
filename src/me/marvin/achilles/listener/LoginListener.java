@@ -29,7 +29,7 @@ public class LoginListener implements Listener {
 
         profile.setUsername(e.getName());
         profile.getPunishments(ExpirablePunishment.class).forEach(punishment -> {
-            if (punishment.isExpired()) {
+            if (punishment.isExpired() && punishment.isActive()) {
                 punishment.expire();
             }
         });
