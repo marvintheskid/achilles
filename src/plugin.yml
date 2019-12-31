@@ -3,9 +3,11 @@ name: achilles
 version: 0.1-alpha
 author: marvin
 website: https://github.com/marvintheskid/achilles
+description: A featureful, lightweight, open-source punishment system for Spigot.
 
 commands:
   ban:
+  mute:
 permissions:
   achilles.*:
     children:
@@ -34,4 +36,20 @@ permissions:
     default: false
   achilles.ban.override:
     description: Permission for overriding existing bans.
+    default: false
+  achilles.mute.*:
+    children:
+      - achilles.mute.issue
+      - achilles.mute.lift
+      - achilles.mute.override
+    description: Permission for mut players.
+    default: false
+  achilles.mute.issue:
+    description: Permission for muting players.
+    default: false
+  achilles.mute.lift:
+    description: Permission for unmuting players.
+    default: false
+  achilles.mute.override:
+    description: Permission for overriding existing mutes.
     default: false

@@ -2,9 +2,12 @@ package me.marvin.achilles.listener;
 
 import me.marvin.achilles.Achilles;
 import me.marvin.achilles.Language;
+import me.marvin.achilles.Variables;
 import me.marvin.achilles.profile.impl.FullProfile;
+import me.marvin.achilles.profile.impl.SimpleProfile;
 import me.marvin.achilles.punishment.Punishment;
 import me.marvin.achilles.punishment.impl.Mute;
+import me.marvin.achilles.utils.TimeFormatter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,11 +26,13 @@ public class ChatListener implements Listener {
         }
         prof.getActive(Mute.class).ifPresent((mute) -> {
             e.setCancelled(true);
-            String username = mute.getIssuer() == Punishment.CONSOLE_UUID ? Language.Other.CONSOLE_NAME : Achilles.getProfileHandler().getOrCreateProfile(mute.getIssuer()).getUsername();
+            String issuerName = mute.getIssuer() == Punishment.CONSOLE_UUID ? Language.Other.CONSOLE_NAME : new SimpleProfile(mute.getIssuer()).getName();
             p.sendMessage(colorize(mute.isPermanent() ? Language.Mute.PUNISHMENT_MESSAGE : Language.Tempmute.PUNISHMENT_MESSAGE
-                .replace("{issuer}", "")
-                .replace("{target}", "")
-                .replace("{remaining}", "")
+                .replace("{issuer}", issuerName)
+                .replace("{target}", p.getName())
+                .replace("{reason}", mute.getIssueReason())
+                .replace("{server}", Variables.Database.SERVER_NAME)
+                .replace("{remaining}", TimeFormatter.formatTime(mute.getRemaining()))
             ));
         });
     }

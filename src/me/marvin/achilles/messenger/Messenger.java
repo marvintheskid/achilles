@@ -31,6 +31,13 @@ public abstract class Messenger {
         }));
 
         this.consumers.add((message -> {
+            if (message.getType() == MessageType.DATA_UPDATE) {
+                Player p = Bukkit.getPlayer(UUID.fromString(message.getData().get("uuid").getAsString()));
+                if (p != null) Achilles.getProfileHandler().getOrCreateProfile(p.getUniqueId()).load(true);
+            }
+        }));
+
+        this.consumers.add((message -> {
             if (message.getType() == MessageType.KICK_REQUEST) {
                 Player p = Bukkit.getPlayer(UUID.fromString(message.getData().get("uuid").getAsString()));
                 if (p != null) p.kickPlayer(colorize(message.getData().get("message").getAsString()));

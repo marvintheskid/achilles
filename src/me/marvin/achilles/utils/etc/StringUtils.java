@@ -9,11 +9,18 @@ public class StringUtils {
     }
 
     public static String build(String[] arr, int index) {
+        return build(arr, index, true);
+    }
+
+    public static String build(String[] arr, int index, boolean trim) {
         StringBuilder builder = new StringBuilder();
         for (int i = index; i < arr.length; i++) {
+            if (!builder.toString().trim().equals("")) builder.append(" ");
             builder.append(arr[i]);
         }
-        return builder.toString().trim();
+        String result = builder.toString();
+        if (trim) result = result.trim();
+        return result;
     }
 
     public static boolean isSilent(String reason) {

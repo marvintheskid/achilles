@@ -15,6 +15,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import java.util.Optional;
 import java.util.UUID;
 
+import static me.marvin.achilles.utils.etc.PlayerUtils.getPlayerName;
 import static me.marvin.achilles.utils.etc.StringUtils.colorize;
 
 public class LoginListener implements Listener {
@@ -43,7 +44,7 @@ public class LoginListener implements Listener {
             if (blacklist.getIssuer() == Punishment.CONSOLE_UUID) {
                 issuerName = Language.Other.CONSOLE_NAME;
             } else {
-                issuerName = Language.Other.CONSOLE_NAME;
+                issuerName = getPlayerName(blacklist.getIssuer());
             }
 
             e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, colorize(Language.Blacklist.PUNISHMENT_MESSAGE
@@ -64,7 +65,7 @@ public class LoginListener implements Listener {
             if (ban.getIssuer() == Punishment.CONSOLE_UUID) {
                 issuerName = Language.Other.CONSOLE_NAME;
             } else {
-                issuerName = Language.Other.CONSOLE_NAME;
+                issuerName = getPlayerName(ban.getIssuer());
             }
 
             e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, colorize(ban.isPermanent() ? Language.Ban.PUNISHMENT_MESSAGE : Language.Tempban.PUNISHMENT_MESSAGE

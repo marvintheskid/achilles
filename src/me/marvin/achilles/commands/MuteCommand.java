@@ -10,6 +10,7 @@ import me.marvin.achilles.profile.impl.SimpleProfile;
 import me.marvin.achilles.punishment.ExpirablePunishment;
 import me.marvin.achilles.punishment.Punishment;
 import me.marvin.achilles.punishment.impl.Ban;
+import me.marvin.achilles.punishment.impl.Mute;
 import me.marvin.achilles.utils.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -19,15 +20,16 @@ import org.bukkit.entity.Player;
 import java.util.Optional;
 import java.util.UUID;
 
-import static me.marvin.achilles.Language.Ban.*;
-import static me.marvin.achilles.utils.etc.StringUtils.*;
-import static me.marvin.achilles.utils.etc.PlayerUtils.*;
+import static me.marvin.achilles.Language.Mute.*;
+import static me.marvin.achilles.utils.etc.PlayerUtils.getPlayerName;
+import static me.marvin.achilles.utils.etc.StringUtils.colorize;
+import static me.marvin.achilles.utils.etc.StringUtils.formatFully;
 
-public class BanCommand extends WrappedCommand {
-    public BanCommand() {
-        super("ban");
-        setDescription("Bans people.");
-        setPermission("achilles.ban.issue");
+public class MuteCommand extends WrappedCommand {
+    public MuteCommand() {
+        super("mute");
+        setDescription("Mutes people.");
+        setPermission("achilles.mute.issue");
         setPermissionMessage(colorize(Language.Other.NO_PERMISSION));
     }
 
@@ -52,15 +54,15 @@ public class BanCommand extends WrappedCommand {
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
         String targetName = getPlayerName(args[0]);
         SimpleProfile profile = new SimpleProfile(target.getUniqueId());
-        Optional<Ban> currentBan = profile.getActive(Ban.class);
+        Optional<Mute> currentMute = profile.getActive(Mute.class);
 
-        if (currentBan.isPresent()) {
-            if (!sender.hasPermission("achilles.ban.override") && currentBan.get().isPermanent()) {
+        if (currentMute.isPresent()) {
+            if (!sender.hasPermission("achilles.mute.override") && currentMute.get().isPermanent()) {
                 sender.sendMessage(colorize(Language.Other.NO_PERMISSION_TO_OVERRIDE));
                 return false;
             } else {
-                profile.getCache().get(Ban.class).forEach(punishment -> {
-                    Ban active = (Ban) punishment;
+                profile.getCache().get(Mute.class).forEach(punishment -> {
+                    Mute active = (Mute) punishment;
                     active.setLiftedBy(issuer);
                     active.setLiftReason(Language.Other.OVERRIDE_REASON);
                     active.lift();
@@ -69,8 +71,8 @@ public class BanCommand extends WrappedCommand {
         }
 
         Pair<String, Boolean> formatted = formatFully(args, DEFAULT_REASON);
-        Ban ban = new Ban(issuer, target.getUniqueId(), ExpirablePunishment.PERMANENT_PUNISHMENT, formatted.getKey());
-        ban.issue();
+        Mute mute = new Mute(issuer, target.getUniqueId(), ExpirablePunishment.PERMANENT_PUNISHMENT, formatted.getKey());
+        mute.issue();
 
         String localMsg = MESSAGE
             .replace("{issuer}", issuerName)
@@ -97,17 +99,18 @@ public class BanCommand extends WrappedCommand {
         Message message = new Message(MessageType.MESSAGE, alertData);
 
         if (target.isOnline()) {
-            Bukkit.getPlayer(target.getUniqueId()).kickPlayer(colorize(punishmentMsg));
-
+            Bukkit.getPlayer(target.getUniqueId()).sendMessage(colorize(punishmentMsg));
+            if (Achilles.getProfileHandler().getProfiles().containsKey(target.getUniqueId())) {
+                Achilles.getProfileHandler().getProfiles().get(target.getUniqueId()).getPunishments().add(mute);
+            }
             Achilles.getMessenger().sendMessage(message);
         } else {
-            JsonObject kickData = new JsonObject();
-            kickData.addProperty("uuid", target.getUniqueId().toString());
-            kickData.addProperty("message", punishmentMsg);
+            JsonObject updateData = new JsonObject();
+            updateData.addProperty("uuid", target.getUniqueId().toString());
 
-            Message kickReq = new Message(MessageType.KICK_REQUEST, kickData);
+            Message updateReq = new Message(MessageType.DATA_UPDATE, updateData);
             Achilles.getMessenger().sendMessage(message);
-            Achilles.getMessenger().sendMessage(kickReq);
+            Achilles.getMessenger().sendMessage(updateReq);
         }
 
         return true;
