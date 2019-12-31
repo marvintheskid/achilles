@@ -96,8 +96,9 @@ public class BanCommand extends WrappedCommand {
         Bukkit.broadcast(colorize(localMsg), "achilles.alerts");
 
         if (target.isOnline()) {
+            Bukkit.getPlayer(target.getUniqueId()).kickPlayer(colorize(punishmentMsg));
+
             Message message = new Message(MessageType.MESSAGE, alertData);
-            Bukkit.getPlayer(target.getUniqueId()).kickPlayer(punishmentMsg);
             Achilles.getMessenger().sendMessage(message);
         } else {
             JsonObject kickData = new JsonObject();
