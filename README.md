@@ -1,6 +1,9 @@
 # achilles
 Egy nyílt-forráskódú szankciókezelő rendszer
 
+## TODO
++ TimeParser / PeriodMatcher fixelése
+
 ## Licensz
 Copyright (c) 2019 marvintheskid (Kovács Márton)
 
