@@ -7,6 +7,7 @@ description: A featureful, lightweight, open-source punishment system for Spigot
 
 commands:
   ban:
+  tempban:
   mute:
 permissions:
   achilles.*:
@@ -35,6 +36,12 @@ permissions:
     description: Permission for unbanning players.
     default: false
   achilles.ban.override:
+    description: Permission for overriding existing bans.
+    default: false
+  achilles.tempban.issue:
+    description: Permission for overriding existing bans.
+    default: false
+  achilles.tempban.override:
     description: Permission for overriding existing bans.
     default: false
   achilles.mute.*:

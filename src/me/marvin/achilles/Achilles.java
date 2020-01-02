@@ -3,6 +3,7 @@ package me.marvin.achilles;
 import lombok.Getter;
 import me.marvin.achilles.commands.BanCommand;
 import me.marvin.achilles.commands.MuteCommand;
+import me.marvin.achilles.commands.TempbanCommand;
 import me.marvin.achilles.listener.ChatListener;
 import me.marvin.achilles.listener.JoinListener;
 import me.marvin.achilles.listener.LoginListener;
@@ -13,6 +14,7 @@ import me.marvin.achilles.messenger.impl.SQLMessenger;
 import me.marvin.achilles.profile.ProfileHandler;
 import me.marvin.achilles.punishment.Punishment;
 import me.marvin.achilles.punishment.PunishmentHandlerData;
+import me.marvin.achilles.punishment.expiry.PunishmentExpiryLimit;
 import me.marvin.achilles.punishment.impl.Ban;
 import me.marvin.achilles.punishment.impl.Blacklist;
 import me.marvin.achilles.punishment.impl.Kick;
@@ -21,6 +23,7 @@ import me.marvin.achilles.utils.DependencyManager;
 import me.marvin.achilles.utils.config.Config;
 import me.marvin.achilles.utils.sql.HikariConnection;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static me.marvin.achilles.Variables.Database.*;
@@ -30,6 +33,7 @@ import java.util.Map;
 //TODO: cleanup handlers
 public class Achilles extends JavaPlugin {
     @Getter private static Map<Class<? extends Punishment>, PunishmentHandlerData> handlers;
+    @Getter private static Map<String, PunishmentExpiryLimit> expiryData;
     @Getter private static ProfileHandler profileHandler;
     @Getter private static HikariConnection connection;
     @Getter private static Messenger messenger;
@@ -74,6 +78,13 @@ public class Achilles extends JavaPlugin {
             POOL_SIZE
         );
         connection.connect();
+
+        if (connection.getConnection() == null) {
+            getLogger().severe("[Database] Failed to connect to the database, shutting down...");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         handlers = new HashMap<Class<? extends Punishment>, PunishmentHandlerData>() {
             @Override
             public PunishmentHandlerData put(Class<? extends Punishment> key, PunishmentHandlerData value) {
@@ -81,6 +92,8 @@ public class Achilles extends JavaPlugin {
                 return super.put(key, value);
             }
         };
+
+        expiryData = new HashMap<>();
 
         switch (Variables.Messenger.TYPE.toUpperCase()) {
             case "REDIS": {
@@ -100,13 +113,17 @@ public class Achilles extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new QuitListener(), this);
         Bukkit.getPluginManager().registerEvents(new ChatListener(), this);
 
+        ConfigurationSection temporarySection = configuration.getFileConfiguration().getConfigurationSection("temporary-limits");
+        temporarySection.getKeys(false).forEach(key -> expiryData.put(key, new PunishmentExpiryLimit().fromConfig(key, temporarySection)));
+
         new BanCommand().setExecutor(this);
+        new TempbanCommand().setExecutor(this);
         new MuteCommand().setExecutor(this);
     }
 
     @Override
     public void onDisable() {
-        connection.disconnect();
+        if (connection != null) connection.disconnect();
         messenger.shutdown();
         messenger = null;
         connection = null;

@@ -3,6 +3,9 @@ package me.marvin.achilles.utils.etc;
 import me.marvin.achilles.utils.Pair;
 import org.bukkit.ChatColor;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class StringUtils {
     public static String colorize(String str) {
         return ChatColor.translateAlternateColorCodes('&', str);
@@ -52,26 +55,26 @@ public class StringUtils {
         return reason;
     }
 
-    public static Pair<String, Boolean> formatFully(String[] args, String defaultReason) {
+    public static Pair<String, Boolean> formatFully(String[] args, int startIndex, String defaultReason) {
         boolean silent;
-        if (args.length == 1) {
+        if (args.length == startIndex) {
             silent = isSilent(defaultReason);
             return new Pair<>(formatReason(defaultReason), silent);
         } else {
-            String reason = build(args, 1);
+            String reason = build(args, startIndex);
             if (reason.equalsIgnoreCase("-s")) {
                 silent = true;
                 if (isSilent(defaultReason)) {
                     reason = formatReason(defaultReason);
                 } else {
-                    reason = formatReason(formatReason(defaultReason) + "-s");
+                    reason = formatReason(formatReason(defaultReason) + " -s");
                 }
             } else if (reason.equalsIgnoreCase("-p")) {
                 silent = false;
                 if (!isSilent(defaultReason)) {
                     reason = formatReason(defaultReason);
                 } else {
-                    reason = formatReason(formatReason(defaultReason) + "-p");
+                    reason = formatReason(formatReason(defaultReason) + " -p");
                 }
             } else {
                 silent = isSilent(reason);

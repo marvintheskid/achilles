@@ -22,6 +22,8 @@ public class Language {
         public static String PLUGIN_START_KICK_MESSAGE = "";
         @ConfigPath(path = "console-name", config = "config")
         public static String CONSOLE_NAME = "";
+        @ConfigPath(path = "date-formatting.wrong-format", config = "config")
+        public static String WRONG_DURATION_FORMAT = "";
     }
 
     public static class Alts {
@@ -102,6 +104,8 @@ public class Language {
         public static String DEFAULT_REASON = "";
         @ConfigPath(path = "punishments.tempban.punishment-message", config = "config")
         public static String PUNISHMENT_MESSAGE = "";
+        @ConfigPath(path = "punishments.tempban.max-length", config = "config")
+        public static String MAX_LENGTH = "";
     }
 
     public static class Tempmute {
@@ -117,6 +121,8 @@ public class Language {
         public static String DEFAULT_REASON = "";
         @ConfigPath(path = "punishments.tempmute.punishment-message", config = "config")
         public static String PUNISHMENT_MESSAGE = "";
+        @ConfigPath(path = "punishments.tempmute.max-length", config = "config")
+        public static String MAX_LENGTH = "";
     }
 
     public static class Unban {

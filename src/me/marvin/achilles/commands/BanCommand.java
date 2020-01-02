@@ -68,7 +68,7 @@ public class BanCommand extends WrappedCommand {
             }
         }
 
-        Pair<String, Boolean> formatted = formatFully(args, DEFAULT_REASON);
+        Pair<String, Boolean> formatted = formatFully(args, 1, DEFAULT_REASON);
         Ban ban = new Ban(issuer, target.getUniqueId(), ExpirablePunishment.PERMANENT_PUNISHMENT, formatted.getKey());
         ban.issue();
 

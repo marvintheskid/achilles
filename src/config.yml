@@ -45,6 +45,18 @@ save-alts: false
   #   multi
   #   lined!
   #   usage.
+
+# Permission-szerinti temp punishment duration
+# Permission: achilles.temporary.{temp limit}
+# Pl.: achilles.temporary.admin
+temporary-limits:
+  admin:
+    ban: "3M"
+    mute: "3M"
+  mod:
+    ban: "1w"
+    mute: "1w"
+
 punishments:
   kick:
     usage: "&6Usage: &f/kick &7<player> [reason] [-s]"
@@ -81,6 +93,7 @@ punishments:
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
     punishment-message: "&cYour account is temporarily banned from the server."
+    max-length: "&cYou can't ban this user for this long. The highest amount you can do: {highest}"
   tempmute:
     usage: "&6Usage: &f/tempmute &7<player> <time> [reason] [-s]"
     message: "{silent}&e{target} &fhas been muted temporarily by &6{issuer}"
@@ -88,6 +101,7 @@ punishments:
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
     punishment-message: "&cYou can't talk, because you are temporarily muted."
+    max-length: "&cYou can't ban this user for this long. The highest amount you can do: {highest}"
   unban:
     usage: "&6Usage: &f/unban &7<player> [reason] [-s]"
     message: "{silent}&e{target} &fhas been unbanned by &6{issuer}"
@@ -118,6 +132,7 @@ not-punished: "&cThis player is not punished."
 console-name: "~CONSOLE"
 
 date-formatting:
+  wrong-format: "&cThe duration you provided was invalid. Example: (3w3d = 3 weeks and 3 days)"
   pattern-settings:
     # Lásd: Java simple date formatting
     pattern: "yyyy.MM.dd hh:mm"
