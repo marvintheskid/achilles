@@ -18,7 +18,6 @@ public class RedisMessenger extends Messenger {
     @Override
     public void initialize() {
         Bukkit.getScheduler().runTaskAsynchronously(Achilles.getInstance(), new InitializeRunnable());
-        Bukkit.getScheduler().runTaskAsynchronously(Achilles.getInstance(), new ReconnectRunnable());
         Bukkit.getScheduler().runTaskTimer(Achilles.getInstance(), new SubscribeRunnable(), 2L, 2L);
     }
 
@@ -52,6 +51,8 @@ public class RedisMessenger extends Messenger {
             } else {
                 pool = new JedisPool(config, HOST, PORT);
             }
+
+            Bukkit.getScheduler().runTaskAsynchronously(Achilles.getInstance(), new ReconnectRunnable());
         }
     }
 

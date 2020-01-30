@@ -122,7 +122,7 @@ public class HikariConnection {
 
     public void connect() {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + db + "?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8");
+        config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + db + "?useUnicode=true&characterEncoding=UTF-8");
         config.setUsername(user);
         config.setPassword(pw);
         config.setDriverClassName("com.mysql.jdbc.Driver");
@@ -138,6 +138,7 @@ public class HikariConnection {
         config.addDataSourceProperty("cacheServerConfiguration", true);
         config.addDataSourceProperty("elideSetAutoCommits", true);
         config.addDataSourceProperty("maintainTimeStats", false);
+        config.setLeakDetectionThreshold(60 * 1000);
 
         try {
             connection = new HikariDataSource(config);

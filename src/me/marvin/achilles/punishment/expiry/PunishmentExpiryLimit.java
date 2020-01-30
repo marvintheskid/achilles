@@ -16,7 +16,6 @@ public class PunishmentExpiryLimit {
         this.permission = "achilles.temporary." + key;
         this.maxBanLength = PeriodMatcher.parsePeriod(section.getString(key + ".ban"));
         this.maxMuteLength = PeriodMatcher.parsePeriod(section.getString(key + ".mute"));
-        System.out.println(toString());
         return this;
     }
 }

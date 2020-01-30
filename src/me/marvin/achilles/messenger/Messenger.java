@@ -50,6 +50,7 @@ public abstract class Messenger {
     public abstract void sendMessage(Message message);
 
     protected final void handleIncoming(Message message) {
-        consumers.forEach(consumer -> consumer.accept(message));
+        Bukkit.getScheduler().runTask(Achilles.getInstance(), () ->
+            consumers.forEach(consumer -> consumer.accept(message)));
     }
 }

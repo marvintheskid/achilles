@@ -18,6 +18,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -98,13 +99,17 @@ public class TempbanCommand extends WrappedCommand {
             .replace("{target}", targetName)
             .replace("{reason}", formatted.getKey())
             .replace("{silent}", formatted.getValue() ? SILENT : "")
-            .replace("{server}", Variables.Database.SERVER_NAME);
+            .replace("{server}", Variables.Database.SERVER_NAME)
+            .replace("{remaining}", TimeFormatter.formatTime(ban.getRemaining()))
+            .replace("{until}", Variables.Date.DATE_FORMAT.format(new Date(ban.getUntil())));
         String punishmentMsg = PUNISHMENT_MESSAGE
             .replace("{issuer}", issuerName)
             .replace("{target}", targetName)
             .replace("{reason}", formatted.getKey())
             .replace("{silent}", formatted.getValue() ? SILENT : "")
-            .replace("{server}", Variables.Database.SERVER_NAME);
+            .replace("{server}", Variables.Database.SERVER_NAME)
+            .replace("{remaining}", TimeFormatter.formatTime(ban.getRemaining()))
+            .replace("{until}", Variables.Date.DATE_FORMAT.format(new Date(ban.getUntil())));
 
         JsonObject alertData = new JsonObject();
         alertData.addProperty("message", ALERT_MESSAGE
@@ -112,7 +117,9 @@ public class TempbanCommand extends WrappedCommand {
             .replace("{target}", targetName)
             .replace("{reason}", formatted.getKey())
             .replace("{silent}", formatted.getValue() ? SILENT : "")
-            .replace("{server}", Variables.Database.SERVER_NAME));
+            .replace("{server}", Variables.Database.SERVER_NAME)
+            .replace("{remaining}", TimeFormatter.formatTime(ban.getRemaining()))
+            .replace("{until}", Variables.Date.DATE_FORMAT.format(new Date(ban.getUntil()))));
 
         Bukkit.broadcast(colorize(localMsg), "achilles.alerts");
         Message message = new Message(MessageType.MESSAGE, alertData);

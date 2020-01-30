@@ -4,6 +4,7 @@ import lombok.Getter;
 import me.marvin.achilles.commands.BanCommand;
 import me.marvin.achilles.commands.MuteCommand;
 import me.marvin.achilles.commands.TempbanCommand;
+import me.marvin.achilles.commands.TempmuteCommand;
 import me.marvin.achilles.listener.ChatListener;
 import me.marvin.achilles.listener.JoinListener;
 import me.marvin.achilles.listener.LoginListener;
@@ -119,6 +120,7 @@ public class Achilles extends JavaPlugin {
         new BanCommand().setExecutor(this);
         new TempbanCommand().setExecutor(this);
         new MuteCommand().setExecutor(this);
+        new TempmuteCommand().setExecutor(this);
     }
 
     @Override

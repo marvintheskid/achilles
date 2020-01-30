@@ -13,6 +13,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.Date;
+
 import static me.marvin.achilles.utils.etc.StringUtils.colorize;
 
 public class ChatListener implements Listener {
@@ -33,6 +35,7 @@ public class ChatListener implements Listener {
                 .replace("{reason}", mute.getIssueReason())
                 .replace("{server}", Variables.Database.SERVER_NAME)
                 .replace("{remaining}", TimeFormatter.formatTime(mute.getRemaining()))
+                .replace("{until}", Variables.Date.DATE_FORMAT.format(new Date(mute.getUntil())))
             ));
         });
     }

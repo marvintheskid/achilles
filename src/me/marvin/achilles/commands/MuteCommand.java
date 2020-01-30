@@ -12,11 +12,13 @@ import me.marvin.achilles.punishment.Punishment;
 import me.marvin.achilles.punishment.impl.Ban;
 import me.marvin.achilles.punishment.impl.Mute;
 import me.marvin.achilles.utils.Pair;
+import me.marvin.achilles.utils.TimeFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -79,13 +81,17 @@ public class MuteCommand extends WrappedCommand {
             .replace("{target}", targetName)
             .replace("{reason}", formatted.getKey())
             .replace("{silent}", formatted.getValue() ? SILENT : "")
-            .replace("{server}", Variables.Database.SERVER_NAME);
+            .replace("{server}", Variables.Database.SERVER_NAME)
+            .replace("{remaining}", TimeFormatter.formatTime(mute.getRemaining()))
+            .replace("{until}", Variables.Date.DATE_FORMAT.format(new Date(mute.getUntil())));
         String punishmentMsg = PUNISHMENT_MESSAGE
             .replace("{issuer}", issuerName)
             .replace("{target}", targetName)
             .replace("{reason}", formatted.getKey())
             .replace("{silent}", formatted.getValue() ? SILENT : "")
-            .replace("{server}", Variables.Database.SERVER_NAME);
+            .replace("{server}", Variables.Database.SERVER_NAME)
+            .replace("{remaining}", TimeFormatter.formatTime(mute.getRemaining()))
+            .replace("{until}", Variables.Date.DATE_FORMAT.format(new Date(mute.getUntil())));
 
         JsonObject alertData = new JsonObject();
         alertData.addProperty("message", ALERT_MESSAGE
@@ -93,7 +99,9 @@ public class MuteCommand extends WrappedCommand {
             .replace("{target}", targetName)
             .replace("{reason}", formatted.getKey())
             .replace("{silent}", formatted.getValue() ? SILENT : "")
-            .replace("{server}", Variables.Database.SERVER_NAME));
+            .replace("{server}", Variables.Database.SERVER_NAME)
+            .replace("{remaining}", TimeFormatter.formatTime(mute.getRemaining()))
+            .replace("{until}", Variables.Date.DATE_FORMAT.format(new Date(mute.getUntil()))));
 
         Bukkit.broadcast(colorize(localMsg), "achilles.alerts");
         Message message = new Message(MessageType.MESSAGE, alertData);

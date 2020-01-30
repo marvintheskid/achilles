@@ -58,7 +58,7 @@ public class FullProfile extends Profile {
             "`username` = ?, " +
             "`ip` = ?, " +
             "`lastlogin` = ?;",
-            (result) -> {}, UUIDConverter.to(uuid), player.getName(), player.getAddress().getHostName(), System.currentTimeMillis(), player.getName(), player.getAddress().getHostName(), System.currentTimeMillis());
+            (result) -> {}, UUIDConverter.to(uuid), player.getName(), player.getAddress().getAddress().getHostAddress(), System.currentTimeMillis(), player.getName(), player.getAddress().getAddress().getHostAddress(), System.currentTimeMillis());
     }
 
     public void scanAlts() {

@@ -2,6 +2,7 @@ package me.marvin.achilles.listener;
 
 import me.marvin.achilles.Achilles;
 import me.marvin.achilles.Language;
+import me.marvin.achilles.Variables;
 import me.marvin.achilles.profile.impl.FullProfile;
 import me.marvin.achilles.punishment.ExpirablePunishment;
 import me.marvin.achilles.punishment.Punishment;
@@ -9,9 +10,11 @@ import me.marvin.achilles.punishment.impl.Ban;
 import me.marvin.achilles.punishment.impl.Blacklist;
 import me.marvin.achilles.utils.TimeFormatter;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,7 +22,7 @@ import static me.marvin.achilles.utils.etc.PlayerUtils.getPlayerName;
 import static me.marvin.achilles.utils.etc.StringUtils.colorize;
 
 public class LoginListener implements Listener {
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     void onLogin(AsyncPlayerPreLoginEvent e) {
         UUID uuid = e.getUniqueId();
         FullProfile profile = Achilles.getProfileHandler().getOrCreateProfile(uuid, false);
@@ -74,6 +77,7 @@ public class LoginListener implements Listener {
                 .replace("{reason}", ban.getIssueReason())
                 .replace("{server}", ban.getServer())
                 .replace("{remaining}", TimeFormatter.formatTime(ban.getRemaining()))
+                .replace("{until}", Variables.Date.DATE_FORMAT.format(new Date(ban.getUntil())))
             ));
             Achilles.getProfileHandler().getProfiles().remove(uuid);
             return;

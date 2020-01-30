@@ -4,17 +4,12 @@ import me.marvin.achilles.Achilles;
 import me.marvin.achilles.profile.impl.SimpleProfile;
 import me.marvin.achilles.punishment.expiry.PunishmentExpiryLimit;
 import me.marvin.achilles.utils.Pair;
-import me.marvin.achilles.utils.PeriodMatcher;
-import me.marvin.achilles.utils.TimeFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class PlayerUtils {
     public static String getPlayerName(String from) {
