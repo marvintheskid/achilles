@@ -1,6 +1,7 @@
 package me.marvin.achilles.punishment;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import lombok.Data;
 
 import java.sql.ResultSet;
@@ -16,6 +17,7 @@ public abstract class Punishment {
     protected long issuedOn, id;
 
     public abstract void fromResultSet(ResultSet rs) throws SQLException;
+    public abstract boolean isInstanceOf(Punishment punishment);
     protected abstract void issuePunishment();
 
     public final void issue() {

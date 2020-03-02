@@ -40,7 +40,7 @@ public class Config {
     }
 
     public void saveDefaultConfig() {
-        boolean dirResult = plugin.getDataFolder().mkdirs();
+        boolean ignored = plugin.getDataFolder().mkdirs();
         if (!file.exists()) {
             plugin.saveResource(name + ".yml", false);
         }
@@ -68,7 +68,6 @@ public class Config {
             if (field.isAnnotationPresent(ConfigPath.class)) {
                 String config = field.getAnnotation(ConfigPath.class).config();
                 String path = field.getAnnotation(ConfigPath.class).path();
-                String fallback = field.getAnnotation(ConfigPath.class).fallback();
                 if (!config.equalsIgnoreCase(name)) continue;
                 if (!field.isAccessible()) field.setAccessible(true);
 
@@ -79,8 +78,12 @@ public class Config {
                 }
 
                 try {
-                    Object val = resolver.resolve(fileConfiguration.get(path, fallback));
-                    field.set(clazz, val);
+                    Object val = fileConfiguration.get(path);
+                    if (val == null) {
+                        val = field.get(null);
+                        fileConfiguration.set(path, val);
+                    }
+                    field.set(clazz, resolver.resolve(val));
                 } catch (IllegalAccessException ex) {
                     ex.printStackTrace();
                 }

@@ -11,5 +11,6 @@
     <orderEntry type="library" name="com.zaxxer:HikariCP:3.4.1" level="project" />
     <orderEntry type="library" name="org.projectlombok:lombok:1.18.2" level="project" />
     <orderEntry type="library" name="redis.clients:jedis:3.1.0" level="project" />
+    <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
   </component>
 </module>

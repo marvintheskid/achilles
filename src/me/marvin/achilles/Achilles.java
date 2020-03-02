@@ -14,6 +14,7 @@ import me.marvin.achilles.messenger.impl.RedisMessenger;
 import me.marvin.achilles.messenger.impl.SQLMessenger;
 import me.marvin.achilles.profile.ProfileHandler;
 import me.marvin.achilles.punishment.Punishment;
+import me.marvin.achilles.punishment.PunishmentHandler;
 import me.marvin.achilles.punishment.PunishmentHandlerData;
 import me.marvin.achilles.punishment.expiry.PunishmentExpiryLimit;
 import me.marvin.achilles.punishment.impl.Ban;
@@ -33,7 +34,7 @@ import java.util.Map;
 
 //TODO: cleanup handlers
 public class Achilles extends JavaPlugin {
-    @Getter private static Map<Class<? extends Punishment>, PunishmentHandlerData> handlers;
+    @Getter private static Map<Class<? extends Punishment>, PunishmentHandler<?>> handlers;
     @Getter private static Map<String, PunishmentExpiryLimit> expiryData;
     @Getter private static ProfileHandler profileHandler;
     @Getter private static HikariConnection connection;
@@ -86,10 +87,10 @@ public class Achilles extends JavaPlugin {
             return;
         }
 
-        handlers = new HashMap<Class<? extends Punishment>, PunishmentHandlerData>() {
+        handlers = new HashMap<Class<? extends Punishment>, PunishmentHandler<?>>() {
             @Override
-            public PunishmentHandlerData put(Class<? extends Punishment> key, PunishmentHandlerData value) {
-                value.getHandler().createTable();
+            public PunishmentHandler<?> put(Class<? extends Punishment> key, PunishmentHandler<?> value) {
+                value.createTable();
                 return super.put(key, value);
             }
         };
@@ -136,56 +137,10 @@ public class Achilles extends JavaPlugin {
     }
 
     private void initHandlers() {
-        handlers.put(Ban.class, new PunishmentHandlerData(BAN_TABLE_NAME, Ban::new, () -> Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + BAN_TABLE_NAME + "` ("
-                + "`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-                + "`server` varchar(200) NOT NULL,"
-                + "`issuer` binary(16) NOT NULL,"
-                + "`target` binary(16) NOT NULL,"
-                + "`issueReason` varchar(200) NOT NULL,"
-                + "`issuedOn` bigint NOT NULL,"
-                + "`until` bigint NOT NULL,"
-                + "`liftedBy` binary(16),"
-                + "`liftedOn` bigint,"
-                + "`liftReason` varchar(200),"
-                + "`active` tinyint(1) NOT NULL) DEFAULT CHARSET=utf8;",
-            (result) -> {})
-        ));
-        handlers.put(Kick.class, new PunishmentHandlerData(KICK_TABLE_NAME, Kick::new, () -> Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + KICK_TABLE_NAME + "` ("
-                + "`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-                + "`server` varchar(200) NOT NULL,"
-                + "`issuer` binary(16) NOT NULL,"
-                + "`target` binary(16) NOT NULL,"
-                + "`issueReason` varchar(200) NOT NULL,"
-                + "`issuedOn` bigint NOT NULL) DEFAULT CHARSET=utf8;",
-            (result) -> {})
-        ));
-        handlers.put(Mute.class, new PunishmentHandlerData(MUTE_TABLE_NAME, Mute::new, () -> Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + MUTE_TABLE_NAME + "` ("
-                + "`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-                + "`server` varchar(200) NOT NULL,"
-                + "`issuer` binary(16) NOT NULL,"
-                + "`target` binary(16) NOT NULL,"
-                + "`issueReason` varchar(200) NOT NULL,"
-                + "`issuedOn` bigint NOT NULL,"
-                + "`until` bigint NOT NULL,"
-                + "`liftedBy` binary(16),"
-                + "`liftedOn` bigint,"
-                + "`liftReason` varchar(200),"
-                + "`active` tinyint(1) NOT NULL) DEFAULT CHARSET=utf8;",
-            (result) -> {})
-        ));
-        handlers.put(Blacklist.class, new PunishmentHandlerData(BLACKLIST_TABLE_NAME, Blacklist::new, () -> Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + BLACKLIST_TABLE_NAME + "` ("
-                + "`id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-                + "`server` varchar(200) NOT NULL,"
-                + "`issuer` binary(16) NOT NULL,"
-                + "`target` binary(16) NOT NULL,"
-                + "`issueReason` varchar(200) NOT NULL,"
-                + "`issuedOn` bigint NOT NULL,"
-                + "`liftedBy` binary(16),"
-                + "`liftedOn` bigint,"
-                + "`liftReason` varchar(200),"
-                + "`active` tinyint(1) NOT NULL) DEFAULT CHARSET=utf8;",
-            (result) -> {})
-        ));
+        handlers.put(Ban.class, PunishmentHandler.BAN_HANDLER);
+        handlers.put(Kick.class, PunishmentHandler.KICK_HANDLER);
+        handlers.put(Mute.class, PunishmentHandler.MUTE_HANDLER);
+        handlers.put(Blacklist.class, PunishmentHandler.BLACKLIST_HANDLER);
         Achilles.getConnection().update("CREATE TABLE IF NOT EXISTS `" + ALTS_TABLE_NAME + "` ("
                 + "`uuid` binary(16) UNIQUE KEY NOT NULL,"
                 + "`username` varchar(16) NOT NULL,"

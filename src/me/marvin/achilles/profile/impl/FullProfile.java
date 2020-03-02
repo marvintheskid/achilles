@@ -8,6 +8,7 @@ import me.marvin.achilles.profile.Profile;
 import me.marvin.achilles.profile.alts.AltAccount;
 import me.marvin.achilles.punishment.LiftablePunishment;
 import me.marvin.achilles.punishment.Punishment;
+import me.marvin.achilles.punishment.PunishmentHandler;
 import me.marvin.achilles.punishment.PunishmentHandlerData;
 import me.marvin.achilles.punishment.impl.Ban;
 import me.marvin.achilles.punishment.impl.Blacklist;
@@ -20,6 +21,8 @@ import org.bukkit.entity.Player;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static me.marvin.achilles.Variables.Database.ALTS_TABLE_NAME;
 
 @Getter
 public class FullProfile extends Profile {
@@ -34,13 +37,15 @@ public class FullProfile extends Profile {
         this.alts = new ArrayList<>();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    public <T extends Punishment> List<T> getPunishments(Class<? extends T> type) {
+    public <T extends Punishment> List<T> getPunishments(Class<T> type) {
         return (List<T>) Collections.unmodifiableList(punishments.stream().filter(punishment -> type.isAssignableFrom(punishment.getClass())).collect(Collectors.toList()));
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    public <T extends LiftablePunishment> Optional<T> getActive(Class<? extends T> type) {
+    public <T extends LiftablePunishment> Optional<T> getActive(Class<T> type) {
         return (Optional<T>) ((List<? extends LiftablePunishment>) getPunishments(type)).stream().filter(LiftablePunishment::isActive).min(Comparator.comparingLong(Punishment::getId));
     }
 
@@ -51,7 +56,7 @@ public class FullProfile extends Profile {
             return;
         }
 
-        Achilles.getConnection().update(true, "INSERT INTO `" + Variables.Database.ALTS_TABLE_NAME + "` " +
+        Achilles.getConnection().update(true, "INSERT INTO `" + ALTS_TABLE_NAME + "` " +
             "(`uuid`, `username`, `ip`, `lastlogin`)" +
             " VALUES (?, ?, ?, ?)" +
             " ON DUPLICATE KEY UPDATE " +
@@ -68,7 +73,7 @@ public class FullProfile extends Profile {
             return;
         }
 
-        Achilles.getConnection().query(true, "SELECT * FROM `" + Variables.Database.ALTS_TABLE_NAME + "` WHERE `ip` = ?;",
+        Achilles.getConnection().query(true, "SELECT * FROM `" + ALTS_TABLE_NAME + "` WHERE `ip` = ?;",
             (result) -> {
                 try {
                     while (result.next()) {
@@ -94,7 +99,7 @@ public class FullProfile extends Profile {
         getPunishmentsFromTable(Kick.class, async);
         getPunishmentsFromTable(Mute.class, async);
 
-        Achilles.getConnection().query(async, "SELECT `username` FROM `" + Variables.Database.ALTS_TABLE_NAME + "` WHERE `uuid` = ? LIMIT 1;",
+        Achilles.getConnection().query(async, "SELECT `username` FROM `" + ALTS_TABLE_NAME + "` WHERE `uuid` = ? LIMIT 1;",
             (result) -> {
                 try {
                     if (result.next() && username == null) username = result.getString("username");
@@ -107,26 +112,9 @@ public class FullProfile extends Profile {
         return this;
     }
 
-    private void getPunishmentsFromTable(Class<? extends Punishment> type, boolean async) {
-        PunishmentHandlerData data = Achilles.getHandlers().get(type);
-        if (data == null) {
-            throw new RuntimeException("found no handlers for punishment " + type.getSimpleName());
-        }
-        Achilles.getConnection().query(async, "SELECT * FROM `" + data.getTable() + "` WHERE `target` = ?", (result) -> {
-            try {
-                while (result.next()) {
-                    Punishment punishment = data.getSupplier().get();
-                    punishment.fromResultSet(result);
-                    punishments.add(punishment);
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }, UUIDConverter.to(uuid));
-    }
-
-    private void checkPunishmentsFor(AltAccount account, Class<? extends Punishment> type) {
-        PunishmentHandlerData data = Achilles.getHandlers().get(type);
+    @SuppressWarnings("unchecked")
+    private <T extends Punishment> void checkPunishmentsFor(AltAccount account, Class<T> type) {
+        PunishmentHandler<T> data = (PunishmentHandler<T>) Achilles.getHandlers().get(type);
         if (data == null) {
             throw new RuntimeException("found no handlers for punishment " + type.getSimpleName());
         }

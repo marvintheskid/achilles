@@ -38,6 +38,10 @@ public class HikariConnection {
         this.query(true, query, result, params);
     }
 
+    public void update(String query, Consumer<Integer> result, BatchContainer container) {
+        this.update(true, query, result, container.getObjects());
+    }
+
     public void update(String query, Consumer<Integer> result, Object... params) {
         this.update(true, query, result, params);
     }

@@ -10,5 +10,4 @@ import java.lang.annotation.Target;
 public @interface ConfigPath {
     String path();
     String config();
-    String fallback() default ("");
 }

@@ -2,6 +2,10 @@ package me.marvin.achilles.punishment;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.marvin.achilles.utils.UUIDConverter;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @Getter
 @Setter
@@ -12,8 +16,14 @@ public abstract class ExpirablePunishment extends LiftablePunishment {
 
     protected abstract void expirePunishment();
 
+    @Override
+    public void fromResultSet(ResultSet rs) throws SQLException {
+        super.fromResultSet(rs);
+        this.until = rs.getLong("until");
+    }
+
     public final void expire() {
-        active = false;
+        this.active = false;
         expirePunishment();
     }
 
