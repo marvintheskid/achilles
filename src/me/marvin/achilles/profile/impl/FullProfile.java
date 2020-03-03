@@ -24,6 +24,26 @@ import java.util.stream.Collectors;
 
 import static me.marvin.achilles.Variables.Database.ALTS_TABLE_NAME;
 
+/*
+ * Copyright (c) 2019 marvintheskid (Kovács Márton)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
+ * following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial
+ * portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
+ * OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 @Getter
 public class FullProfile extends Profile {
     @Setter private String username;
@@ -94,10 +114,10 @@ public class FullProfile extends Profile {
     }
 
     public FullProfile load(boolean async) {
-        getPunishmentsFromTable(Ban.class, async);
-        getPunishmentsFromTable(Blacklist.class, async);
-        getPunishmentsFromTable(Kick.class, async);
-        getPunishmentsFromTable(Mute.class, async);
+        punishments.addAll(getPunishmentsFromTable(Blacklist.class, async));
+        punishments.addAll(getPunishmentsFromTable(Ban.class, async));
+        punishments.addAll(getPunishmentsFromTable(Kick.class, async));
+        punishments.addAll(getPunishmentsFromTable(Mute.class, async));
 
         Achilles.getConnection().query(async, "SELECT `username` FROM `" + ALTS_TABLE_NAME + "` WHERE `uuid` = ? LIMIT 1;",
             (result) -> {

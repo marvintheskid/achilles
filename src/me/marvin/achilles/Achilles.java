@@ -1,10 +1,7 @@
 package me.marvin.achilles;
 
 import lombok.Getter;
-import me.marvin.achilles.commands.BanCommand;
-import me.marvin.achilles.commands.MuteCommand;
-import me.marvin.achilles.commands.TempbanCommand;
-import me.marvin.achilles.commands.TempmuteCommand;
+import me.marvin.achilles.commands.*;
 import me.marvin.achilles.listener.ChatListener;
 import me.marvin.achilles.listener.JoinListener;
 import me.marvin.achilles.listener.LoginListener;
@@ -32,6 +29,26 @@ import static me.marvin.achilles.Variables.Database.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * Copyright (c) 2019 marvintheskid (Kovács Márton)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
+ * following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial
+ * portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
+ * OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 //TODO: cleanup handlers
 public class Achilles extends JavaPlugin {
     @Getter private static Map<Class<? extends Punishment>, PunishmentHandler<?>> handlers;
@@ -48,27 +65,8 @@ public class Achilles extends JavaPlugin {
         DependencyManager.loadDependencies();
         configuration = new Config("config", this);
         configuration.saveDefaultConfig();
-        configuration.loadAnnotatedValues(Language.Other.class);
-        configuration.loadAnnotatedValues(Language.Ban.class);
-        configuration.loadAnnotatedValues(Language.Tempban.class);
-        configuration.loadAnnotatedValues(Language.Unban.class);
-        configuration.loadAnnotatedValues(Language.Kick.class);
-        configuration.loadAnnotatedValues(Language.Blacklist.class);
-        configuration.loadAnnotatedValues(Language.Unblacklist.class);
-        configuration.loadAnnotatedValues(Language.Mute.class);
-        configuration.loadAnnotatedValues(Language.Tempmute.class);
-        configuration.loadAnnotatedValues(Language.Unmute.class);
-
-        configuration.loadAnnotatedValues(Variables.Database.class);
-        configuration.loadAnnotatedValues(Variables.Database.Credentials.class);
-
-        configuration.loadAnnotatedValues(Variables.Messenger.class);
-        configuration.loadAnnotatedValues(Variables.Messenger.SQL.class);
-        configuration.loadAnnotatedValues(Variables.Messenger.Redis.class);
-
-        configuration.loadAnnotatedValues(Variables.Alts.class);
-        configuration.loadAnnotatedValues(Variables.Date.class);
-        configuration.loadAnnotatedValues(Variables.Punishment.class);
+        configuration.loadAnnotatedValues(Language.class, true);
+        configuration.loadAnnotatedValues(Variables.class, true);
         profileHandler = new ProfileHandler();
         connection = new HikariConnection(
             Credentials.HOST,
@@ -119,6 +117,8 @@ public class Achilles extends JavaPlugin {
         temporarySection.getKeys(false).forEach(key -> expiryData.put(key, new PunishmentExpiryLimit().fromConfig(key, temporarySection)));
 
         new BanCommand().setExecutor(this);
+        new UnbanCommand().setExecutor(this);
+
         new TempbanCommand().setExecutor(this);
         new MuteCommand().setExecutor(this);
         new TempmuteCommand().setExecutor(this);

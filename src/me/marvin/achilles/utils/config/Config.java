@@ -16,6 +16,26 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Predicate;
 
+/*
+ * Copyright (c) 2019 marvintheskid (Kovács Márton)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
+ * following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial
+ * portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+ * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT
+ * OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 @Getter
 public class Config {
     private Map<Class<?>, ConfigResolver<?>> resolverMap;
@@ -64,9 +84,22 @@ public class Config {
     }
 
     public void loadAnnotatedValues(Class<?> clazz) {
-        for (Field field : clazz.getDeclaredFields()) {
+        loadAnnotatedValues(clazz, false);
+    }
+
+    public void loadAnnotatedValues(Class<?> clazz, boolean deep) {
+        List<Field> fields = new ArrayList<>();
+
+        if (deep) {
+            getFieldsRecursively(clazz, fields);
+        } else {
+            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+        }
+
+        for (Field field : fields) {
             if (field.isAnnotationPresent(ConfigPath.class)) {
                 String config = field.getAnnotation(ConfigPath.class).config();
+                String def = field.getAnnotation(ConfigPath.class).def();
                 String path = field.getAnnotation(ConfigPath.class).path();
                 if (!config.equalsIgnoreCase(name)) continue;
                 if (!field.isAccessible()) field.setAccessible(true);
@@ -78,19 +111,23 @@ public class Config {
                 }
 
                 try {
-                    Object val = fileConfiguration.get(path);
-                    if (val == null) {
-                        val = field.get(null);
-                        fileConfiguration.set(path, val);
-                    }
-                    field.set(clazz, resolver.resolve(val));
+                    Object val = resolver.resolve(fileConfiguration.get(path, def));
+                    field.set(clazz, val);
                 } catch (IllegalAccessException ex) {
                     ex.printStackTrace();
                 }
             }
         }
 
-        for (Method method : clazz.getDeclaredMethods()) {
+        List<Method> methods = new ArrayList<>();
+
+        if (deep) {
+            getMethodsRecursively(clazz, methods);
+        } else {
+            methods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
+        }
+
+        for (Method method : methods) {
             if (method.isAnnotationPresent(InitializeAfterConfig.class)) {
                 if (!method.getAnnotation(InitializeAfterConfig.class).config().equalsIgnoreCase(name)) continue;
                 if (!method.isAccessible()) method.setAccessible(true);
@@ -100,6 +137,20 @@ public class Config {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    private void getFieldsRecursively(Class<?> clazz, List<Field> list) {
+        for (Class<?> other : clazz.getDeclaredClasses()) {
+            getFieldsRecursively(other, list);
+            list.addAll(Arrays.asList(other.getDeclaredFields()));
+        }
+    }
+
+    private void getMethodsRecursively(Class<?> clazz, List<Method> list) {
+        for (Class<?> other : clazz.getDeclaredClasses()) {
+            getMethodsRecursively(other, list);
+            list.addAll(Arrays.asList(other.getDeclaredMethods()));
         }
     }
 }
