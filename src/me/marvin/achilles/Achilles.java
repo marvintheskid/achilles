@@ -49,7 +49,6 @@ import java.util.Map;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-//TODO: cleanup handlers
 public class Achilles extends JavaPlugin {
     @Getter private static Map<Class<? extends Punishment>, PunishmentHandler<?>> handlers;
     @Getter private static Map<String, PunishmentExpiryLimit> expiryData;
