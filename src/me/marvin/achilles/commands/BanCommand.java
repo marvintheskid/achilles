@@ -8,25 +8,30 @@ import me.marvin.achilles.messenger.Message;
 import me.marvin.achilles.messenger.MessageType;
 import me.marvin.achilles.profile.impl.SimpleProfile;
 import me.marvin.achilles.punishment.ExpirablePunishment;
+import me.marvin.achilles.punishment.LiftablePunishment;
 import me.marvin.achilles.punishment.Punishment;
+import me.marvin.achilles.punishment.PunishmentHandler;
 import me.marvin.achilles.punishment.impl.Ban;
 import me.marvin.achilles.utils.Pair;
 import me.marvin.achilles.utils.TimeFormatter;
+import me.marvin.achilles.utils.sql.BatchContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static me.marvin.achilles.Language.Ban.*;
 import static me.marvin.achilles.utils.etc.StringUtils.*;
 import static me.marvin.achilles.utils.etc.PlayerUtils.*;
 
 /*
- * Copyright (c) 2019 marvintheskid (Kovács Márton)
+ * Copyright (c) 2019-Present marvintheskid (Kovács Márton)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -77,16 +82,24 @@ public class BanCommand extends WrappedCommand {
         Optional<Ban> currentBan = profile.getActive(Ban.class);
 
         if (currentBan.isPresent()) {
+            //TODO: compare punishment times
             if (!sender.hasPermission("achilles.ban.override") && currentBan.get().isPermanent()) {
                 sender.sendMessage(colorize(Language.Other.NO_PERMISSION_TO_OVERRIDE));
                 return false;
             } else {
-                profile.getCache().get(Ban.class).forEach(punishment -> {
-                    Ban active = (Ban) punishment;
-                    active.setLiftedBy(issuer);
-                    active.setLiftReason(Language.Other.OVERRIDE_REASON);
-                    active.lift();
-                });
+                List<Ban> punishments = profile.getPunishments(Ban.class)
+                    .stream()
+                    .filter(LiftablePunishment::isActive)
+                    .collect(Collectors.toList());
+                BatchContainer[] containers = new BatchContainer[punishments.size()];
+                for (int i = 0; i < punishments.size(); i++) {
+                    Ban ban = punishments.get(i);
+                    ban.setLiftedBy(issuer);
+                    ban.setLiftReason(Language.Other.OVERRIDE_REASON);
+                    containers[i] = punishments.get(i).createLiftBatch();
+                }
+
+                Achilles.getConnection().batchUpdate(PunishmentHandler.BAN_HANDLER.getLiftQuery(), (result) -> {}, containers);
             }
         }
 

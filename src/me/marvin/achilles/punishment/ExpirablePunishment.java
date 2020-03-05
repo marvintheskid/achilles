@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /*
- * Copyright (c) 2019 marvintheskid (Kovács Márton)
+ * Copyright (c) 2019-Present marvintheskid (Kovács Márton)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -30,7 +30,7 @@ import java.sql.SQLException;
 @Getter
 @Setter
 public abstract class ExpirablePunishment extends LiftablePunishment {
-    public static int PERMANENT_PUNISHMENT = -1;
+    public static final int PERMANENT_PUNISHMENT = -1;
 
     protected long until;
 

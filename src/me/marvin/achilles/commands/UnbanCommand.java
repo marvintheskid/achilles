@@ -7,20 +7,22 @@ import me.marvin.achilles.Variables;
 import me.marvin.achilles.messenger.Message;
 import me.marvin.achilles.messenger.MessageType;
 import me.marvin.achilles.profile.impl.SimpleProfile;
+import me.marvin.achilles.punishment.LiftablePunishment;
 import me.marvin.achilles.punishment.Punishment;
 import me.marvin.achilles.punishment.PunishmentHandler;
 import me.marvin.achilles.punishment.impl.Ban;
 import me.marvin.achilles.utils.Pair;
-import me.marvin.achilles.utils.TimeFormatter;
 import me.marvin.achilles.utils.sql.BatchContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Date;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static me.marvin.achilles.Language.Unban.*;
 import static me.marvin.achilles.utils.etc.PlayerUtils.getPlayerName;
@@ -28,7 +30,7 @@ import static me.marvin.achilles.utils.etc.StringUtils.colorize;
 import static me.marvin.achilles.utils.etc.StringUtils.formatFully;
 
 /*
- * Copyright (c) 2019 marvintheskid (Kovács Márton)
+ * Copyright (c) 2019-Present marvintheskid (Kovács Márton)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -82,34 +84,40 @@ public class UnbanCommand extends WrappedCommand {
         Pair<String, Boolean> formatted = formatFully(args, 1, DEFAULT_REASON);
 
         if (currentBan.isPresent()) {
-            BatchContainer[] containers = new BatchContainer[profile.getPunishments(Ban.class).size()];
-            int index = 0;
-            for (Ban ban : profile.getPunishments(Ban.class)) {
-                containers[index++] = ban.createLiftBatch();
+            List<Ban> punishments = profile.getPunishments(Ban.class)
+                .stream()
+                .filter(LiftablePunishment::isActive)
+                .collect(Collectors.toList());
+            BatchContainer[] containers = new BatchContainer[punishments.size()];
+            for (int i = 0; i < punishments.size(); i++) {
+                Ban ban = punishments.get(i);
+                ban.setLiftedBy(issuer);
+                ban.setLiftReason(formatted.getKey());
+                containers[i] = ban.createLiftBatch();
             }
 
-            Achilles.getConnection().batchUpdate(PunishmentHandler.BAN_HANDLER.getLiftQuery(), (result) -> {
-                String localMsg = MESSAGE
-                    .replace("{issuer}", issuerName)
-                    .replace("{target}", targetName)
-                    .replace("{reason}", formatted.getKey())
-                    .replace("{silent}", formatted.getValue() ? SILENT : "")
-                    .replace("{server}", Variables.Database.SERVER_NAME);
+            Achilles.getConnection().batchUpdate(PunishmentHandler.BAN_HANDLER.getLiftQuery(), (result) -> {}, containers);
 
-                Bukkit.broadcast(colorize(localMsg), "achilles.alerts");
+            String localMsg = MESSAGE
+                .replace("{issuer}", issuerName)
+                .replace("{target}", targetName)
+                .replace("{reason}", formatted.getKey())
+                .replace("{silent}", formatted.getValue() ? SILENT : "")
+                .replace("{server}", Variables.Database.SERVER_NAME);
 
-                JsonObject alertData = new JsonObject();
-                alertData.addProperty("message", ALERT_MESSAGE
-                    .replace("{issuer}", issuerName)
-                    .replace("{target}", targetName)
-                    .replace("{reason}", formatted.getKey())
-                    .replace("{silent}", formatted.getValue() ? SILENT : "")
-                    .replace("{server}", Variables.Database.SERVER_NAME));
+            Bukkit.broadcast(colorize(localMsg), "achilles.alerts");
 
-                Message message = new Message(MessageType.MESSAGE, alertData);
+            JsonObject alertData = new JsonObject();
+            alertData.addProperty("message", ALERT_MESSAGE
+                .replace("{issuer}", issuerName)
+                .replace("{target}", targetName)
+                .replace("{reason}", formatted.getKey())
+                .replace("{silent}", formatted.getValue() ? SILENT : "")
+                .replace("{server}", Variables.Database.SERVER_NAME));
 
-                Achilles.getMessenger().sendMessage(message);
-            }, containers);
+            Message message = new Message(MessageType.MESSAGE, alertData);
+
+            Achilles.getMessenger().sendMessage(message);
             return true;
         }
 

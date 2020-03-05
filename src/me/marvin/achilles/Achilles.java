@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /*
- * Copyright (c) 2019 marvintheskid (Kovács Márton)
+ * Copyright (c) 2019-Present marvintheskid (Kovács Márton)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -49,7 +49,6 @@ import java.util.Map;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-//TODO: cleanup handlers
 public class Achilles extends JavaPlugin {
     @Getter private static Map<Class<? extends Punishment>, PunishmentHandler<?>> handlers;
     @Getter private static Map<String, PunishmentExpiryLimit> expiryData;

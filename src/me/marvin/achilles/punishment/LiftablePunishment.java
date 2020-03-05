@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 /*
- * Copyright (c) 2019 marvintheskid (Kovács Márton)
+ * Copyright (c) 2019-Present marvintheskid (Kovács Márton)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -43,13 +43,8 @@ public abstract class LiftablePunishment extends Punishment {
 
     @Override
     public void fromResultSet(ResultSet rs) throws SQLException {
-        this.server = rs.getString("server");
-        this.issuer = UUIDConverter.from(rs.getBytes("issuer"));
-        this.target = UUIDConverter.from(rs.getBytes("target"));
-        this.issueReason = rs.getString("issueReason");
-        this.issuedOn = rs.getLong("issuedOn");
+        super.fromResultSet(rs);
         this.active = rs.getBoolean("active");
-        this.id = rs.getInt("id");
         if (!this.active) {
             this.liftedBy = UUIDConverter.from(rs.getBytes("liftedBy"));
             this.liftReason = rs.getString("liftReason");

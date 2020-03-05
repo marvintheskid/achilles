@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 /*
- * Copyright (c) 2019 marvintheskid (Kovács Márton)
+ * Copyright (c) 2019-Present marvintheskid (Kovács Márton)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -88,9 +88,9 @@ public class HikariConnection {
 
     public void batchUpdate(boolean async, String query, Consumer<Integer[]> result, BatchContainer... params) {
         if (service != null && async) {
-            service.execute(() -> batchUpdate(query, result, params));
+            service.execute(() -> updateBatchInternal(query, result, params));
         } else {
-            batchUpdate(query, result, params);
+            updateBatchInternal(query, result, params);
         }
     }
 
@@ -137,7 +137,8 @@ public class HikariConnection {
                 }
                 stmt.addBatch();
             }
-            result.accept(IntStream.of(stmt.executeBatch()).boxed().toArray(Integer[]::new));
+            int[] res = stmt.executeBatch();
+            result.accept(IntStream.of(res).boxed().toArray(Integer[]::new));
         } catch (Exception ex) {
             ex.printStackTrace();
             result.accept(new Integer[]{-1});

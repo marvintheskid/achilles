@@ -8,13 +8,15 @@ import me.marvin.achilles.punishment.PunishmentHandler;
 import me.marvin.achilles.utils.UUIDConverter;
 import me.marvin.achilles.utils.sql.BatchContainer;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 import java.util.function.Supplier;
 
 import static me.marvin.achilles.Variables.Database.BLACKLIST_TABLE_NAME;
 
 /*
- * Copyright (c) 2019 marvintheskid (Kovács Márton)
+ * Copyright (c) 2019-Present marvintheskid (Kovács Márton)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including

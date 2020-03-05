@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 /*
- * Copyright (c) 2019 marvintheskid (Kovács Márton)
+ * Copyright (c) 2019-Present marvintheskid (Kovács Márton)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -42,15 +42,15 @@ public class SimpleProfile extends Profile {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T extends LiftablePunishment> Optional<T> getActive(Class<T> type) {
-        return (Optional<T>) getPunishments(type)
+        return getPunishments(type)
             .stream()
-            .map(punishment -> (LiftablePunishment) punishment)
             .filter(LiftablePunishment::isActive)
             .min(Comparator.comparingLong(Punishment::getId));
     }
 
+
+    //TODO: Async getpunishments
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Punishment> List<T> getPunishments(Class<T> type) {
