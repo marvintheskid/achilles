@@ -1,16 +1,19 @@
 package me.marvin.achilles.commands;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import me.marvin.achilles.Achilles;
 import me.marvin.achilles.Language;
 import me.marvin.achilles.Variables;
 import me.marvin.achilles.messenger.Message;
 import me.marvin.achilles.messenger.MessageType;
+import me.marvin.achilles.profile.Profile;
+import me.marvin.achilles.profile.impl.FullProfile;
 import me.marvin.achilles.profile.impl.SimpleProfile;
 import me.marvin.achilles.punishment.LiftablePunishment;
 import me.marvin.achilles.punishment.Punishment;
 import me.marvin.achilles.punishment.PunishmentHandler;
-import me.marvin.achilles.punishment.impl.Ban;
+import me.marvin.achilles.punishment.impl.Mute;
 import me.marvin.achilles.utils.Pair;
 import me.marvin.achilles.utils.sql.BatchContainer;
 import org.bukkit.Bukkit;
@@ -18,13 +21,13 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static me.marvin.achilles.Language.Unban.*;
+import static me.marvin.achilles.Language.Unmute.*;
 import static me.marvin.achilles.utils.etc.PlayerUtils.getPlayerName;
 import static me.marvin.achilles.utils.etc.StringUtils.colorize;
 import static me.marvin.achilles.utils.etc.StringUtils.formatFully;
@@ -50,11 +53,11 @@ import static me.marvin.achilles.utils.etc.StringUtils.formatFully;
  */
 
 //FIXME
-public class UnbanCommand extends WrappedCommand {
-    public UnbanCommand() {
-        super("unban");
-        setDescription("Unbans people.");
-        setPermission("achilles.ban.lift");
+public class UnmuteCommand extends WrappedCommand {
+    public UnmuteCommand() {
+        super("unmute");
+        setDescription("Unmutes people.");
+        setPermission("achilles.mute.lift");
         setPermissionMessage(colorize(Language.Other.NO_PERMISSION));
     }
 
@@ -79,21 +82,23 @@ public class UnbanCommand extends WrappedCommand {
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
         String targetName = getPlayerName(args[0]);
 
-        SimpleProfile profile = new SimpleProfile(target.getUniqueId());
-        Optional<Ban> currentBan = profile.getActive(Ban.class);
+        Profile profile = target.isOnline() ?
+            Preconditions.checkNotNull(Achilles.getProfileHandler().getProfiles().get(target.getUniqueId())) : new SimpleProfile(target.getUniqueId());
+
+        Optional<Mute> currentBan = profile.getActive(Mute.class);
         Pair<String, Boolean> formatted = formatFully(args, 1, DEFAULT_REASON);
 
         if (currentBan.isPresent()) {
-            List<Ban> punishments = profile.getPunishments(Ban.class)
+            List<Mute> punishments = profile.getPunishments(Mute.class)
                 .stream()
                 .filter(LiftablePunishment::isActive)
                 .collect(Collectors.toList());
             BatchContainer[] containers = new BatchContainer[punishments.size()];
             for (int i = 0; i < punishments.size(); i++) {
-                Ban ban = punishments.get(i);
-                ban.setLiftedBy(issuer);
-                ban.setLiftReason(formatted.getKey());
-                containers[i] = ban.createLiftBatch();
+                Mute mute = punishments.get(i);
+                mute.setLiftedBy(issuer);
+                mute.setLiftReason(formatted.getKey());
+                containers[i] = mute.createLiftBatch();
             }
 
             Achilles.getConnection().batchUpdate(PunishmentHandler.BAN_HANDLER.getLiftQuery(), (result) -> {}, containers);
@@ -118,6 +123,15 @@ public class UnbanCommand extends WrappedCommand {
             Message message = new Message(MessageType.MESSAGE, alertData);
 
             Achilles.getMessenger().sendMessage(message);
+
+            if (!target.isOnline()) {
+                JsonObject updateData = new JsonObject();
+                updateData.addProperty("uuid", target.getUniqueId().toString());
+
+                Message updateReq = new Message(MessageType.DATA_UPDATE, updateData);
+                Achilles.getMessenger().sendMessage(updateReq);
+            }
+
             return true;
         }
 

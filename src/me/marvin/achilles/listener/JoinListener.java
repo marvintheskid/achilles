@@ -36,7 +36,6 @@ public class JoinListener implements Listener {
         if (prof != null) {
             prof.updateIp();
             prof.scanAlts();
-            System.out.println(prof.getPunishments().size());
         }
         Bukkit.getOnlinePlayers().stream()
             .filter(other -> other.hasPermission("achilles.*") || other.hasPermission("achilles.checkAlts"))

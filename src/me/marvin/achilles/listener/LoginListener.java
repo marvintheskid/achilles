@@ -64,18 +64,18 @@ public class LoginListener implements Listener {
             Blacklist blacklist = optionalBlacklist.get();
             String issuerName;
 
-            if (blacklist.getIssuer() == Punishment.CONSOLE_UUID) {
+            if (blacklist.getIssuer().equals(Punishment.CONSOLE_UUID)) {
                 issuerName = Language.Other.CONSOLE_NAME;
             } else {
                 issuerName = getPlayerName(blacklist.getIssuer());
             }
 
-            e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, colorize(Language.Blacklist.PUNISHMENT_MESSAGE
+            e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, colorize(Language.Blacklist.PUNISHMENT_MESSAGE)
                 .replace("{issuer}", issuerName)
                 .replace("{target}", e.getName())
                 .replace("{reason}", blacklist.getIssueReason())
                 .replace("{server}", blacklist.getServer())
-            ));
+            );
             Achilles.getProfileHandler().getProfiles().remove(uuid);
             return;
         }
@@ -85,20 +85,20 @@ public class LoginListener implements Listener {
             Ban ban = optionalBan.get();
             String issuerName;
 
-            if (ban.getIssuer() == Punishment.CONSOLE_UUID) {
+            if (ban.getIssuer().equals(Punishment.CONSOLE_UUID)) {
                 issuerName = Language.Other.CONSOLE_NAME;
             } else {
                 issuerName = getPlayerName(ban.getIssuer());
             }
 
-            e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, colorize(ban.isPermanent() ? Language.Ban.PUNISHMENT_MESSAGE : Language.Tempban.PUNISHMENT_MESSAGE
+            e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, colorize(ban.isPermanent() ? Language.Ban.PUNISHMENT_MESSAGE : Language.Tempban.PUNISHMENT_MESSAGE)
                 .replace("{issuer}", issuerName)
                 .replace("{target}", e.getName())
                 .replace("{reason}", ban.getIssueReason())
                 .replace("{server}", ban.getServer())
                 .replace("{remaining}", TimeFormatter.formatTime(ban.getRemaining()))
                 .replace("{until}", Variables.Date.DATE_FORMAT.format(new Date(ban.getUntil())))
-            ));
+            );
             Achilles.getProfileHandler().getProfiles().remove(uuid);
             return;
         }

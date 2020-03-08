@@ -114,6 +114,7 @@ public class FullProfile extends Profile {
     }
 
     public FullProfile load(boolean async) {
+        punishments.clear();
         punishments.addAll(getPunishmentsFromTable(Blacklist.class, async));
         punishments.addAll(getPunishmentsFromTable(Ban.class, async));
         punishments.addAll(getPunishmentsFromTable(Kick.class, async));

@@ -115,10 +115,12 @@ public class Achilles extends JavaPlugin {
         ConfigurationSection temporarySection = configuration.getFileConfiguration().getConfigurationSection("temporary-limits");
         temporarySection.getKeys(false).forEach(key -> expiryData.put(key, new PunishmentExpiryLimit().fromConfig(key, temporarySection)));
 
+        new KickCommand().setExecutor(this);
+
         new BanCommand().setExecutor(this);
+        new TempbanCommand().setExecutor(this);
         new UnbanCommand().setExecutor(this);
 
-        new TempbanCommand().setExecutor(this);
         new MuteCommand().setExecutor(this);
         new TempmuteCommand().setExecutor(this);
     }

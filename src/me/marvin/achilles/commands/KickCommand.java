@@ -6,25 +6,17 @@ import me.marvin.achilles.Language;
 import me.marvin.achilles.Variables;
 import me.marvin.achilles.messenger.Message;
 import me.marvin.achilles.messenger.MessageType;
-import me.marvin.achilles.profile.impl.SimpleProfile;
-import me.marvin.achilles.punishment.LiftablePunishment;
 import me.marvin.achilles.punishment.Punishment;
-import me.marvin.achilles.punishment.PunishmentHandler;
-import me.marvin.achilles.punishment.impl.Ban;
+import me.marvin.achilles.punishment.impl.Kick;
 import me.marvin.achilles.utils.Pair;
-import me.marvin.achilles.utils.sql.BatchContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static me.marvin.achilles.Language.Unban.*;
+import static me.marvin.achilles.Language.Kick.*;
 import static me.marvin.achilles.utils.etc.PlayerUtils.getPlayerName;
 import static me.marvin.achilles.utils.etc.StringUtils.colorize;
 import static me.marvin.achilles.utils.etc.StringUtils.formatFully;
@@ -49,12 +41,11 @@ import static me.marvin.achilles.utils.etc.StringUtils.formatFully;
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-//FIXME
-public class UnbanCommand extends WrappedCommand {
-    public UnbanCommand() {
-        super("unban");
-        setDescription("Unbans people.");
-        setPermission("achilles.ban.lift");
+public class KickCommand extends WrappedCommand {
+    public KickCommand() {
+        super("kick");
+        setDescription("Kicks people.");
+        setPermission("achilles.kick.issue");
         setPermissionMessage(colorize(Language.Other.NO_PERMISSION));
     }
 
@@ -78,50 +69,50 @@ public class UnbanCommand extends WrappedCommand {
 
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
         String targetName = getPlayerName(args[0]);
-
-        SimpleProfile profile = new SimpleProfile(target.getUniqueId());
-        Optional<Ban> currentBan = profile.getActive(Ban.class);
         Pair<String, Boolean> formatted = formatFully(args, 1, DEFAULT_REASON);
+        Kick kick = new Kick(issuer, target.getUniqueId(), formatted.getKey());
+        kick.issue();
 
-        if (currentBan.isPresent()) {
-            List<Ban> punishments = profile.getPunishments(Ban.class)
-                .stream()
-                .filter(LiftablePunishment::isActive)
-                .collect(Collectors.toList());
-            BatchContainer[] containers = new BatchContainer[punishments.size()];
-            for (int i = 0; i < punishments.size(); i++) {
-                Ban ban = punishments.get(i);
-                ban.setLiftedBy(issuer);
-                ban.setLiftReason(formatted.getKey());
-                containers[i] = ban.createLiftBatch();
-            }
+        String localMsg = MESSAGE
+            .replace("{issuer}", issuerName)
+            .replace("{target}", targetName)
+            .replace("{reason}", formatted.getKey())
+            .replace("{silent}", formatted.getValue() ? SILENT : "")
+            .replace("{server}", Variables.Database.SERVER_NAME);
+        String punishmentMsg = PUNISHMENT_MESSAGE
+            .replace("{issuer}", issuerName)
+            .replace("{target}", targetName)
+            .replace("{reason}", formatted.getKey())
+            .replace("{silent}", formatted.getValue() ? SILENT : "")
+            .replace("{server}", Variables.Database.SERVER_NAME);
 
-            Achilles.getConnection().batchUpdate(PunishmentHandler.BAN_HANDLER.getLiftQuery(), (result) -> {}, containers);
+        JsonObject alertData = new JsonObject();
+        alertData.addProperty("message", ALERT_MESSAGE
+            .replace("{issuer}", issuerName)
+            .replace("{target}", targetName)
+            .replace("{reason}", formatted.getKey())
+            .replace("{silent}", formatted.getValue() ? SILENT : "")
+            .replace("{server}", Variables.Database.SERVER_NAME));
 
-            String localMsg = MESSAGE
-                .replace("{issuer}", issuerName)
-                .replace("{target}", targetName)
-                .replace("{reason}", formatted.getKey())
-                .replace("{silent}", formatted.getValue() ? SILENT : "")
-                .replace("{server}", Variables.Database.SERVER_NAME);
+        Bukkit.broadcast(colorize(localMsg), "achilles.alerts");
+        Message message = new Message(MessageType.MESSAGE, alertData);
 
-            Bukkit.broadcast(colorize(localMsg), "achilles.alerts");
+        //TODO: implement cross-server kick better
 
-            JsonObject alertData = new JsonObject();
-            alertData.addProperty("message", ALERT_MESSAGE
-                .replace("{issuer}", issuerName)
-                .replace("{target}", targetName)
-                .replace("{reason}", formatted.getKey())
-                .replace("{silent}", formatted.getValue() ? SILENT : "")
-                .replace("{server}", Variables.Database.SERVER_NAME));
-
-            Message message = new Message(MessageType.MESSAGE, alertData);
+        if (target.isOnline()) {
+            Bukkit.getPlayer(target.getUniqueId()).kickPlayer(colorize(punishmentMsg));
 
             Achilles.getMessenger().sendMessage(message);
-            return true;
+        } else {
+            JsonObject kickData = new JsonObject();
+            kickData.addProperty("uuid", target.getUniqueId().toString());
+            kickData.addProperty("message", punishmentMsg);
+
+            Message kickReq = new Message(MessageType.KICK_REQUEST, kickData);
+            Achilles.getMessenger().sendMessage(message);
+            Achilles.getMessenger().sendMessage(kickReq);
         }
 
-        sender.sendMessage(colorize(Language.Other.NOT_PUNISHED));
-        return false;
+        return true;
     }
 }

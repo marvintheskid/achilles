@@ -7,9 +7,13 @@ import me.marvin.achilles.punishment.Punishment;
 import me.marvin.achilles.punishment.PunishmentHandler;
 import me.marvin.achilles.utils.UUIDConverter;
 import me.marvin.achilles.utils.sql.BatchContainer;
+import net.minecraft.server.v1_8_R3.ItemPotion;
+import org.bukkit.craftbukkit.v1_8_R3.potion.CraftPotionEffectType;
+import org.bukkit.potion.PotionEffect;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Supplier;
 
