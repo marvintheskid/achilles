@@ -39,7 +39,7 @@ save-alts: false
   # {server} (only works on "alert-message")
   # {silent} (gets replaced with the punishment"s "silent" string)
 
-  # TIP: Többsoros üzenethez hastnálj "|-"-t a ":" után
+  # TIP: Többsoros üzenethez használj "|-"-t a ":" után
   # pl.:
   # usage: |-
   #   multi
