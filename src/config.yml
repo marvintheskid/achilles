@@ -36,8 +36,8 @@ save-alts: false
   #Placeholderek:
   # {issuer}
   # {target}
-  # {server} (only works on "alert-message")
-  # {silent} (gets replaced with the punishment"s "silent" string)
+  # {server} ("alert-message" üzenet tartalmába működik csak)
+  # {silent} (a "silent" értéke kerül a helyére)
 
   # TIP: Többsoros üzenethez használj "|-"-t a ":" után
   # pl.:
@@ -46,8 +46,8 @@ save-alts: false
   #   lined!
   #   usage.
 
-# Permission-szerinti temp punishment duration
-# Permission: achilles.temporary.{temp limit}
+# Permission-szerinti idg. kitiltás
+# Permission: achilles.temporary.{limit}
 # Pl.: achilles.temporary.admin
 temporary-limits:
   admin:
@@ -78,7 +78,7 @@ punishments:
     alert-message: "{silent}&7[{server}] &e{target} &fhas been muted permanently by &6{issuer}"
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
-    punishment-message: "&cYou can't talk, because you permanently are muted."
+    punishment-message: "&cYou can't talk, because you are permanently muted."
   blacklist:
     usage: "&6Usage: &f/blacklist &7<player> [reason] [-s]"
     message: "{silent}&e{target} &fhas been blacklisted by &6{issuer}"
@@ -93,7 +93,7 @@ punishments:
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
     punishment-message: "&cYour account is temporarily banned from the server."
-    max-length: "&cYou can't ban this user for this long. The highest amount you can do: {highest}"
+    max-length: "&cYou can't ban this user for this long. The highest amount you can do is {highest}"
   tempmute:
     usage: "&6Usage: &f/tempmute &7<player> <time> [reason] [-s]"
     message: "{silent}&e{target} &fhas been muted temporarily by &6{issuer}"
@@ -101,7 +101,7 @@ punishments:
     silent: "&7&o[Silent]&r "
     default-reason: "Not defined. -s"
     punishment-message: "&cYou can't talk, because you are temporarily muted."
-    max-length: "&cYou can't ban this user for this long. The highest amount you can do: {highest}"
+    max-length: "&cYou can't ban this user for this long. The highest amount you can do is {highest}"
   unban:
     usage: "&6Usage: &f/unban &7<player> [reason] [-s]"
     message: "{silent}&e{target} &fhas been unbanned by &6{issuer}"
